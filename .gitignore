@@ -29,3 +29,9 @@
 /.phpcs-cache
 /phpcs.xml
 ###< squizlabs/php_codesniffer ###
+
+/.idea
+
+/.php_cs.cache
+/.php-cs-fixer.cache
+/.phpunit.result.cache
