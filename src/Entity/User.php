@@ -7,6 +7,7 @@ namespace App\Entity;
 
 use App\Entity\Enum\UserRole;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -83,6 +84,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, cascade: ['remove'])]
     private ?Collection $comments;
+
+    /**
+     * Tealists.
+     */
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Tealist::class, orphanRemoval: true)]
+    private ?Collection $tealists;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->collections = new ArrayCollection();
+    }
 
     /**
      * Getter for id.
@@ -305,6 +320,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(?string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Collection>
+     */
+    public function getCollections(): Collection
+    {
+        return $this->collections;
+    }
+
+    /**
+     * Setter for Tealist
+     *
+     * @param Tealist $tealist Tealist
+     *
+     * @return $this
+     */
+    public function addTealist(Tealist $tealist): self
+    {
+        if (!$this->tealists->contains($tealist)) {
+            $this->tealists->add($tealist);
+            $tealist->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Tealist $tealist Tealist
+     *
+     * @return $this
+     */
+    public function removeTealist(Tealist $tealist): self
+    {
+        if ($this->tealists->removeElement($tealist)) {
+            // set the owning side to null (unless already changed)
+            if ($tealist->getAuthor() === $this) {
+                $tealist->setAuthor(null);
+            }
+        }
 
         return $this;
     }

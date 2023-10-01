@@ -1,12 +1,52 @@
 php cs
 php cs fixer
+   1) src/Entity/Collection.php (phpdoc_annotation_without_dot)
+      ---------- begin diff ----------
+--- /home/wwwroot/app/src/Entity/Collection.php
++++ /home/wwwroot/app/src/Entity/Collection.php
+@@ -95,7 +95,7 @@
+     /**
+      * Getter for createdAt.
+      *
+-     * @return \DateTimeImmutable|null $createdAt Createdat.
++     * @return \DateTimeImmutable|null $createdAt createdat
+      */
+     public function getCreatedAt(): ?\DateTimeImmutable
+     {
 
-Found 0 of 56 files that can be fixed in 1.222 seconds, 18.000 MB memory used
- ------- -------- ---- ---------------------- 
-  State   Domain   Id   Message Preview (en)  
- ------- -------- ---- ---------------------- 
+      ----------- end diff -----------
 
- ------- -------- ---- ---------------------- ------------------------------- 
-  State   Domain   Id   Message Preview (pl)   Fallback Message Preview (en)  
- ------- -------- ---- ---------------------- ------------------------------- 
+   2) src/Entity/User.php (phpdoc_summary)
+      ---------- begin diff ----------
+--- /home/wwwroot/app/src/Entity/User.php
++++ /home/wwwroot/app/src/Entity/User.php
+@@ -333,7 +333,7 @@
+     }
+ 
+     /**
+-     * Setter for
++     * Setter for.
+      *
+      * @param Collection $collection Collection
+      *
 
+      ----------- end diff -----------
+
+   3) src/Repository/CollectionRepository.php (no_superfluous_phpdoc_tags, phpdoc_trim)
+      ---------- begin diff ----------
+--- /home/wwwroot/app/src/Repository/CollectionRepository.php
++++ /home/wwwroot/app/src/Repository/CollectionRepository.php
+@@ -33,8 +33,6 @@
+ 
+     /**
+      * Save entity.
+-     *
+-     * @param Collection $entity
+      */
+     public function save(Collection $entity): void
+     {
+
+      ----------- end diff -----------
+
+
+Found 3 of 58 files that can be fixed in 1.273 seconds, 18.000 MB memory used

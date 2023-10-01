@@ -625,6 +625,11 @@
                 <source>title.user_change-password</source>
                 <target>Please type new password</target>
             </trans-unit>
+
+            <trans-unit id="label.tealist.favorites">
+                <source>label.tealist.favorites</source>
+                <target>Favorites</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
