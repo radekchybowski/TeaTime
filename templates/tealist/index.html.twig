@@ -27,6 +27,19 @@
                     <td>{{ tealist.createdAt|date('Y-m-d') }}</td>
                     <td>{{ tealist.author.email }}</td>
                     <td>
+                        {% if tealist.teas is defined and tealist.teas|length %}
+                            {% for tea in tealist.teas %}
+                                <a
+                                        class="badge badge-pill badge-secondary"
+                                        href="{{ url('tealist_index', {'filters.tea_id' : tea.id}) }}"
+                                        title="{{ tea.title }}"
+                                >
+                                    {{ tea.title }}
+                                </a>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td>
                             <a class="btn btn-outline-primary m-1" href="{{ url('tealist_show', {id: tealist.id}) }}" title="{{ 'button.action_show'|trans }}">
                                 {{ 'button.action_show'|trans }}
                             </a>

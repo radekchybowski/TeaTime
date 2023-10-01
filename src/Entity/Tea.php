@@ -64,8 +64,6 @@ class Tea
 
     /**
      * Tags.
-     *
-     * @var Collection<int, Tag>|null
      */
     #[Assert\Valid]
     #[ORM\ManyToMany(targetEntity: Tag::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]

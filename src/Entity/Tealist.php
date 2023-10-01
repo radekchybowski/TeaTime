@@ -6,6 +6,8 @@
 namespace App\Entity;
 
 use App\Repository\TealistRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -57,6 +59,19 @@ class Tealist
     #[Assert\NotBlank]
     #[Assert\Type(User::class)]
     private User $author;
+
+    /**
+     * Teas.
+     */
+    #[Assert\Valid]
+    #[ORM\ManyToMany(targetEntity: Tea::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\JoinTable(name: 'tealists_teas')]
+    private Collection $teas;
+
+    public function __construct()
+    {
+        $this->teas = new ArrayCollection();
+    }
 
     /**
      * Entity id.
@@ -160,6 +175,46 @@ class Tealist
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * Getter for teas.
+     *
+     * @return Collection<int, Tea> $teas Tea
+     */
+    public function getTeas(): Collection
+    {
+        return $this->teas;
+    }
+
+    /**
+     * Adding Tea to Teas collection.
+     *
+     * @param Tea $tea Tea
+     *
+     * @return $this
+     */
+    public function addTea(Tea $tea): self
+    {
+        if (!$this->teas->contains($tea)) {
+            $this->teas->add($tea);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removing Tea to Teas collection.
+     *
+     * @param Tea $tea Tea
+     *
+     * @return $this
+     */
+    public function removeTea(Tea $tea): self
+    {
+        $this->teas->removeElement($tea);
 
         return $this;
     }

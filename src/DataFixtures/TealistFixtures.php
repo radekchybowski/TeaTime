@@ -5,8 +5,6 @@
 
 namespace App\DataFixtures;
 
-use App\DataFixtures\AbstractBaseFixtures;
-use App\DataFixtures\UserFixtures;
 use App\Entity\Tealist;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -54,6 +52,19 @@ class TealistFixtures extends AbstractBaseFixtures implements DependentFixtureIn
              */
             $author = $this->getRandomReference('users');
             $tealist->setAuthor($author);
+
+            /**
+             * Assigning random teas to Tealist object.
+             *
+             * @var array<array-key, Tea> $teas
+             */
+            $teas = $this->getRandomReferences(
+                'teas',
+                $this->faker->numberBetween(2, 10)
+            );
+            foreach ($teas as $tea) {
+                $tealist->addTea($tea);
+            }
 
             return $tealist;
         });
