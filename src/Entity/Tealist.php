@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Class Tealist.
  */
 #[ORM\Entity(repositoryClass: TealistRepository::class)]
+#[ORM\Table(name: 'tealists')]
 class Tealist
 {
     /**
@@ -66,7 +67,7 @@ class Tealist
     #[Assert\Valid]
     #[ORM\ManyToMany(targetEntity: Tea::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinTable(name: 'tealists_teas')]
-    private Collection $teas;
+    private ?Collection $teas;
 
     public function __construct()
     {

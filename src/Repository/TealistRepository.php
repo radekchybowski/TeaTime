@@ -124,8 +124,8 @@ class TealistRepository extends ServiceEntityRepository
     private function applyFiltersToList(QueryBuilder $queryBuilder, array $filters = []): QueryBuilder
     {
         if (isset($filters['tea']) && $filters['tea'] instanceof Tea) {
-            $queryBuilder->andWhere('category = :category')
-                ->setParameter('category', $filters['category']);
+            $queryBuilder->andWhere('teas IN (:tea)')
+                ->setParameter('tea', $filters['tea']);
         }
 
         return $queryBuilder;

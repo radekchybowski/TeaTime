@@ -37,7 +37,7 @@ class TealistController extends AbstractController
      * Constructor.
      *
      * @param TealistServiceInterface $tealistService Tealist service
-     * @param TranslatorInterface $translator Translator
+     * @param TranslatorInterface     $translator     Translator
      */
     public function __construct(TealistServiceInterface $tealistService, TranslatorInterface $translator)
     {
@@ -215,8 +215,7 @@ class TealistController extends AbstractController
     private function getFilters(Request $request): array
     {
         $filters = [];
-        $filters['category_id'] = $request->query->getInt('filters_category_id');
-        $filters['tag_id'] = $request->query->getInt('filters_tag_id');
+        $filters['tea_id'] = $request->query->getInt('filters_tea_id');
 
         return $filters;
     }

@@ -117,6 +117,12 @@ class Tea
     private ?string $vendor = null;
 
     /**
+     * Comments.
+     */
+    #[ORM\OneToMany(mappedBy: 'tea', targetEntity: Comment::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    private ?Collection $comments = null;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -124,12 +130,6 @@ class Tea
         $this->tags = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
-
-    /**
-     * Comments.
-     */
-    #[ORM\OneToMany(mappedBy: 'tea', targetEntity: Comment::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    private ?Collection $comments = null;
 
     /**
      * Getter for Id.
