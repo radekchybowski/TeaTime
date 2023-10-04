@@ -7,6 +7,7 @@
         "php": ">=7.2.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "blackknight467/star-rating-bundle": "^2.0",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.9",
         "doctrine/doctrine-migrations-bundle": "^3.2",
@@ -46,8 +47,7 @@
         "twig/extra-bundle": "^3.7",
         "twig/intl-extra": "^3.6",
         "twig/markdown-extra": "^3.7",
-        "twig/twig": "^2.12|^3.0",
-        "blackknight467/star-rating-bundle": "2.*"
+        "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",

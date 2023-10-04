@@ -4,6 +4,18 @@
 {% block section_title %}
     <h1 class="text-left">{{ tea.title }}</h1>
     <p>Rating: {{ tea.currentRating }}</p>
+    {{ form_start(form) }}
+        {% if false == form.vars.valid %}
+            {% include 'default/_single_alert_message.html.twig' with {
+                type: 'danger',
+                message: 'message.form_error'|trans,
+            }%}
+        {% endif %}
+        {{ form_widget(form) }}
+        <div class="form-group row float-sm-right">
+            <input type="submit" value="{{ 'label.rating.submit'|trans }}" class="btn btn-primary"/>
+        </div>
+    {{ form_end(form) }}
     <a class="btn btn-success" href="{{ path('tea_create') }}">{{ 'button.tea.action_create'|trans }}</a>
 {% endblock %}
 {% block main %}

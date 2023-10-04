@@ -16,20 +16,22 @@ use Doctrine\ORM\NonUniqueResultException;
  */
 class RatingService implements RatingServiceInterface
 {
-
     /**
      * Rating repository.
      */
     private RatingRepository $ratingRepository;
+
+    private TeaServiceInterface $teaService;
 
     /**
      * Constructor.
      *
      * @param RatingRepository $ratingRepository Rating repository
      */
-    public function __construct(RatingRepository $ratingRepository)
+    public function __construct(RatingRepository $ratingRepository, TeaServiceInterface $teaService)
     {
         $this->ratingRepository = $ratingRepository;
+        $this->teaService = $teaService;
     }
 
     /**
@@ -47,13 +49,23 @@ class RatingService implements RatingServiceInterface
     }
 
     /**
-     * Save entity.
+     * Save Rating entity and calling calculateAverateRating method.
      *
      * @param Rating $rating Rating entity
+     *
+     * @return void
      */
     public function save(Rating $rating): void
     {
-        $this->ratingRepository->save($rating);
+        $oldRating = $this->ratingRepository->findOneBy(['tea' => $rating->getTea(), 'author' => $rating->getAuthor()]);
+        if (null !== $oldRating) {
+            $score = $rating->getRating();
+            $oldRating->setRating($score);
+            $this->ratingRepository->save($oldRating);
+        } else {
+            $this->ratingRepository->save($rating);
+        }
+        $this->calculateAverateRating($rating->getTea());
     }
 
     /**
@@ -64,33 +76,6 @@ class RatingService implements RatingServiceInterface
     public function delete(Rating $rating): void
     {
         $this->ratingRepository->delete($rating);
-    }
-
-    /**
-     * Adding a new rating to Rating table and updating currentRating property on Tea entity.
-     *
-     * @param Tea  $tea   Tea
-     * @param User $user  User
-     * @param      $score Score rating
-     */
-    public function addNewRating(Tea $tea, User $user, $score): void
-    {
-        $newRating = new Rating();
-        $newRating->setRating($score);
-        $newRating->setTea($tea);
-        $newRating->setAuthor($user);
-        $this->save($newRating);
-
-        $sum = 0;
-        $i = 0;
-        $allRatings = $this->ratingRepository->findByTea($tea);
-
-        foreach ($allRatings as $rating) {
-            $sum += $rating->getRating();
-            $i++;
-        }
-        $average = round($sum / $i, 2);
-        $tea->setCurrentRating($average);
     }
 
     /**
@@ -106,5 +91,44 @@ class RatingService implements RatingServiceInterface
         foreach ($ratingsArray as $rating) {
             $this->ratingRepository->delete($rating);
         }
+    }
+
+    /**
+     * Returns Users rating if Tea was previously rated.
+     *
+     * @param User $user User
+     * @param Tea  $tea  Tea
+     *
+     * @return Rating|null Rating
+     */
+    public function findPreviousRating(User $user, Tea $tea) : ?Rating
+    {
+        return $this->ratingRepository->findOneBy(['tea' => $tea, 'author' => $user]);
+    }
+
+    /**
+     * Calculate latest average rating and updates currentRating property on $tea entity.
+     *
+     * @param Tea $tea tea
+     *
+     * @return void
+     */
+    public function calculateAverateRating(Tea $tea) : void
+    {
+        $sum = 0;
+        $i = 0;
+        $allRatings = $this->ratingRepository->findByTea($tea);
+
+        foreach ($allRatings as $rating) {
+            $score = $rating->getRating();
+            if (0 === $score) {
+                continue;
+            }
+            $sum += $score;
+            $i++;
+        }
+        $average = round($sum / $i, 2);
+        $tea->setCurrentRating($average);
+        $this->teaService->save($tea);
     }
 }

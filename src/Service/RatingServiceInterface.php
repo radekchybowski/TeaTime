@@ -41,9 +41,28 @@ interface RatingServiceInterface
     public function findOneById(int $id): ?Rating;
 
     /**
-     * Delete all ratings where User is author.
+     * Returns Users rating if Tea was previously rated.
      *
      * @param User $user User
+     * @param Tea  $tea  Tea
+     *
+     * @return Rating|null Rating
      */
-    public function addNewRating(Tea $tea, User $user, $score): void;
+    public function findPreviousRating(User $user, Tea $tea) : ?Rating;
+
+    /**
+     * Delete all entities where param user = author.
+     *
+     * @param User $user User entity
+     */
+    public function deleteRatingByAuthor(User $user): void;
+
+    /**
+     * Calculate latest average rating and updates currentRating property on $tea entity.
+     *
+     * @param Tea $tea tea
+     *
+     * @return void
+     */
+    public function calculateAverateRating(Tea $tea) : void;
 }

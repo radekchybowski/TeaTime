@@ -5,11 +5,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Rating;
 use App\Entity\Tea;
 use App\Entity\User;
 use App\Form\Type\TeaType;
 use App\Service\RatingServiceInterface;
 use App\Service\TeaServiceInterface;
+use Form\Type\RatingType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -81,13 +83,40 @@ class TeaController extends AbstractController
      *
      * @return Response HTTP response
      */
-    #[Route('/{id}', name: 'tea_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
+    #[Route('/{id}', name: 'tea_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET|POST')]
     #[IsGranted('VIEW', subject: 'tea')]
-    public function show(Tea $tea): Response
+    public function show(Request $request, Tea $tea): Response
     {
         $user = $this->getUser();
-        $this->ratingService->addNewRating($tea, $user, 7);
-        return $this->render('tea/show.html.twig', ['tea' => $tea]);
+        $rating = $this->ratingService->findPreviousRating($user, $tea);
+        if (null === $rating) {
+            $rating = new Rating();
+            $rating->setAuthor($user);
+            $rating->setTea($tea);
+        }
+//        var_dump($rating);
+        $form = $this->createForm(
+            RatingType::class,
+            $rating,
+            ['action' => $this->generateUrl('tea_show', ['id' => $tea->getId()])]
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->ratingService->save($rating);
+
+            $this->addFlash(
+                'success',
+                $this->translator->trans('message.created_successfully')
+            );
+
+            return $this->redirectToRoute('tea_show', ['id' => $tea->getId()]);
+        }
+
+        return $this->render('tea/show.html.twig', [
+            'form' => $form->createView(),
+            'tea' => $tea,
+        ]);
     }
 
     /**

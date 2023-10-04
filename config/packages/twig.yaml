@@ -3,6 +3,8 @@ twig:
     form_themes: [ 'bootstrap_5_horizontal_layout.html.twig' ]
     globals:
         avatars_directory: 'uploads/avatars/'
+#    paths:
+#        '%kernel.project_dir%/vendor/blackknight467/star-rating-bundle/blackknight467/StarRatingBundle/Resources/views': BrokoskokoliStarRatingBundle
 
 when@test:
     twig:
