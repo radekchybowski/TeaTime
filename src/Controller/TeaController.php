@@ -8,6 +8,7 @@ namespace App\Controller;
 use App\Entity\Tea;
 use App\Entity\User;
 use App\Form\Type\TeaType;
+use App\Service\RatingServiceInterface;
 use App\Service\TeaServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,6 +30,11 @@ class TeaController extends AbstractController
     private TeaServiceInterface $teaService;
 
     /**
+     * Rating service.
+     */
+    private RatingServiceInterface $ratingService;
+
+    /**
      * Translator.
      */
     private TranslatorInterface $translator;
@@ -39,9 +45,10 @@ class TeaController extends AbstractController
      * @param TeaServiceInterface $teaService Tea service
      * @param TranslatorInterface $translator Translator
      */
-    public function __construct(TeaServiceInterface $teaService, TranslatorInterface $translator)
+    public function __construct(TeaServiceInterface $teaService, RatingServiceInterface $ratingService, TranslatorInterface $translator)
     {
         $this->teaService = $teaService;
+        $this->ratingService = $ratingService;
         $this->translator = $translator;
     }
 
@@ -78,6 +85,8 @@ class TeaController extends AbstractController
     #[IsGranted('VIEW', subject: 'tea')]
     public function show(Tea $tea): Response
     {
+        $user = $this->getUser();
+        $this->ratingService->addNewRating($tea, $user, 7);
         return $this->render('tea/show.html.twig', ['tea' => $tea]);
     }
 

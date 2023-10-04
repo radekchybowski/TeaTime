@@ -3,6 +3,7 @@
 {% block title %}{{ 'site_title.tea.show'|trans }}: {{ tea.title }}{% endblock %}
 {% block section_title %}
     <h1 class="text-left">{{ tea.title }}</h1>
+    <p>Rating: {{ tea.currentRating }}</p>
     <a class="btn btn-success" href="{{ path('tea_create') }}">{{ 'button.tea.action_create'|trans }}</a>
 {% endblock %}
 {% block main %}

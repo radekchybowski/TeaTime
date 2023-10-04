@@ -3,10 +3,8 @@
  * Rating fixtures.
  */
 
-namespace DataFixtures;
+namespace App\DataFixtures;
 
-use App\DataFixtures\AbstractBaseFixtures;
-use App\DataFixtures\UserFixtures;
 use App\Entity\Rating;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;

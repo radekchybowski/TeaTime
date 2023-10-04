@@ -123,6 +123,12 @@ class Tea
     private ?Collection $comments = null;
 
     /**
+     * Current rating average from all ratings.
+     */
+    #[ORM\Column(nullable: true)]
+    private ?float $currentRating = null;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -463,6 +469,30 @@ class Tea
                 $comment->setTea(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * Getter for current rating.
+     *
+     * @return float|null Current rating
+     */
+    public function getCurrentRating(): ?float
+    {
+        return $this->currentRating;
+    }
+
+    /**
+     * Setter for current rating.
+     *
+     * @param float|null $currentRating Current rating
+     *
+     * @return $this
+     */
+    public function setCurrentRating(?float $currentRating): self
+    {
+        $this->currentRating = $currentRating;
 
         return $this;
     }
