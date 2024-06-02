@@ -51,6 +51,15 @@ interface TealistServiceInterface
     public function findOneById(int $id): ?Tealist;
 
     /**
+     * Find by Author.
+     *
+     * @param User $author Author
+     *
+     * @return Tealist|null Tealist
+     */
+    public function findAllByAuthor(User $author): ?Array;
+
+    /**
      * Delete all tealists where User is author.
      *
      * @param User $user User

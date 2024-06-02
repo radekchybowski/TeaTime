@@ -99,6 +99,11 @@
                 <target>Herbaty</target>
             </trans-unit>
 
+            <trans-unit id="sidebar.link.tealist">
+                <source>sidebar.link.tealist</source>
+                <target>Listy herbat</target>
+            </trans-unit>
+
             <trans-unit id="sidebar.link.category">
                 <source>sidebar.link.category</source>
                 <target>Kategorie</target>

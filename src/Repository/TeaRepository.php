@@ -8,6 +8,7 @@ namespace App\Repository;
 use App\Entity\Category;
 use App\Entity\Tag;
 use App\Entity\Tea;
+use App\Entity\Tealist;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -81,10 +82,12 @@ class TeaRepository extends ServiceEntityRepository
             ->select(
                 'partial tea.{id, createdAt, updatedAt, title, currentRating}',
                 'partial category.{id, title}',
-                'partial tags.{id, title}'
+                'partial tags.{id, title}',
+//                'partial tealist.{id, title}',
             )
             ->join('tea.category', 'category')
             ->leftJoin('tea.tags', 'tags')
+//            ->leftJoin('tea.tags', 'tealists')
             ->orderBy('tea.updatedAt', 'DESC');
 
         return $this->applyFiltersToList($queryBuilder, $filters);
@@ -162,6 +165,16 @@ class TeaRepository extends ServiceEntityRepository
         if (isset($filters['tag']) && $filters['tag'] instanceof Tag) {
             $queryBuilder->andWhere('tags IN (:tag)')
                 ->setParameter('tag', $filters['tag']);
+        }
+
+//        if (isset($filters['tealist']) && $filters['tealist'] instanceof Tealist) {
+//            $queryBuilder->andWhere(' IN (:tag)')
+//                ->setParameter('tag', $filters['tag']);
+//        }
+
+        if (isset($filters['tea_name'])) {
+            $queryBuilder->andWhere('tea.title LIKE %:tea%')
+                ->setParameter('tea', $filters['tea_name']);
         }
 
         return $queryBuilder;

@@ -31,7 +31,7 @@
                             {% for tea in tealist.teas %}
                                 <a
                                         class="badge badge-pill badge-secondary"
-                                        href="{{ url('tealist_index', {'filters.tea_id' : tea.id}) }}"
+                                        href="{{ url('tea_show', {id: tea.id}) }}"
                                         title="{{ tea.title }}"
                                 >
                                     {{ tea.title }}

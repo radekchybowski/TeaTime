@@ -1,21 +1,39 @@
 <?php
 /**
- * Rating type.
+ * Tealist type.
  */
 
-namespace Form\Type;
+namespace App\Form\Type;
 
-use App\Entity\Rating;
+use App\Entity\Tealist;
+use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * Class RatingType.
+ * Class TealistType.
  */
-class RatingType extends AbstractType
+class TealistType extends AbstractType
 {
+    /**
+     * Security helper.
+     */
+    private Security $security;
+
+    /**
+     * Constructor.
+     *
+     * @param Security $security Security
+     */
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+
     /**
      * Builds the form.
      *
@@ -30,25 +48,30 @@ class RatingType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
-            'rating',
-            ChoiceType::class,
+            'title',
+            TextType::class,
             [
+                'label' => 'label.title',
                 'required' => true,
-                'choices'  => [
-                    'no rating' => 0,
-                    '1' => 1,
-                    '2' => 2,
-                    '3' => 3,
-                    '4' => 4,
-                    '5' => 5,
-                    '6' => 6,
-                    '7' => 7,
-                    '8' => 8,
-                    '9' => 9,
-                    '10' => 10,
-                ],
+                'attr' => ['max_length' => 255],
             ]
         );
+
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            $builder->add(
+                'author',
+                EntityType::class,
+                [
+                    'class' => User::class,
+                    'choice_label' => function ($user): string {
+                        return $user->getEmail();
+                    },
+                    'label' => 'label.user.email',
+                    'placeholder' => 'label.none',
+                    'required' => true,
+                ]
+            );
+        }
     }
 
     /**
@@ -58,7 +81,7 @@ class RatingType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => Rating::class]);
+        $resolver->setDefaults(['data_class' => Tealist::class]);
     }
 
     /**
@@ -71,6 +94,6 @@ class RatingType extends AbstractType
      */
     public function getBlockPrefix(): string
     {
-        return 'rating';
+        return 'tealist';
     }
 }

@@ -31,8 +31,8 @@ class TealistService implements TealistServiceInterface
     /**
      * Constructor.
      *
-     * @param PaginatorInterface   $paginator            Paginator
-     * @param TealistRepository $tealistRepository Tealist repository
+     * @param PaginatorInterface $paginator         Paginator
+     * @param TealistRepository  $tealistRepository Tealist repository
      */
     public function __construct(PaginatorInterface $paginator, TealistRepository $tealistRepository)
     {
@@ -87,6 +87,18 @@ class TealistService implements TealistServiceInterface
     }
 
     /**
+     * Find by Author.
+     *
+     * @param User $author Author
+     *
+     * @return Tealist|null Tealist
+     */
+    public function findAllByAuthor(User $author): ?Array
+    {
+        return $this->tealistRepository->findByAuthor($author);
+    }
+
+    /**
      * Save entity.
      *
      * @param Tealist $tealist Tealist entity
@@ -133,19 +145,19 @@ class TealistService implements TealistServiceInterface
     private function prepareFilters(array $filters): array
     {
         $resultFilters = [];
-//        if (!empty($filters['category_id'])) {
-//            $category = $this->categoryService->findOneById($filters['category_id']);
-//            if (null !== $category) {
-//                $resultFilters['category'] = $category;
-//            }
-//        }
-//
-//        if (!empty($filters['tag_id'])) {
-//            $tag = $this->tagService->findOneById($filters['tag_id']);
-//            if (null !== $tag) {
-//                $resultFilters['tag'] = $tag;
-//            }
-//        }
+        //        if (!empty($filters['category_id'])) {
+        //            $category = $this->categoryService->findOneById($filters['category_id']);
+        //            if (null !== $category) {
+        //                $resultFilters['category'] = $category;
+        //            }
+        //        }
+        //
+        //        if (!empty($filters['tag_id'])) {
+        //            $tag = $this->tagService->findOneById($filters['tag_id']);
+        //            if (null !== $tag) {
+        //                $resultFilters['tag'] = $tag;
+        //            }
+        //        }
 
         return $resultFilters;
     }

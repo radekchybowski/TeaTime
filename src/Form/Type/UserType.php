@@ -3,19 +3,36 @@
  * User type.
  */
 
-namespace Form\Type;
+namespace App\Form\Type;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class UserType.
  */
 class UserType extends AbstractType
 {
+    /**
+     * Security helper.
+     */
+    private Security $security;
+
+    /**
+     * Constructor.
+     *
+     * @param Security $security Security
+     */
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+
     /**
      * Builds the form.
      *
@@ -56,6 +73,17 @@ class UserType extends AbstractType
                 'attr' => ['max_length' => 255],
             ]
         );
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            $builder->add(
+                'admin',
+                CheckboxType::class,
+                [
+                    'mapped' => false,
+                    'label' => 'label.user.is_admin',
+                    'required' => false,
+                ]
+            );
+        }
     }
 
     /**

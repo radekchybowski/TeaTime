@@ -75,7 +75,6 @@ class TealistController extends AbstractController
      * @return Response HTTP response
      */
     #[Route('/{id}', name: 'tealist_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
-    #[IsGranted('VIEW', subject: 'tealist')]
     public function show(Tealist $tealist): Response
     {
         return $this->render('tealist/show.html.twig', ['tealist' => $tealist]);

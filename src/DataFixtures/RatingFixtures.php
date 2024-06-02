@@ -7,6 +7,8 @@ namespace App\DataFixtures;
 
 use App\Entity\Rating;
 use App\Entity\User;
+use App\Service\RatingServiceInterface;
+use App\Repository\TeaRepository;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 /**
@@ -14,6 +16,28 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
  */
 class RatingFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
+    /**
+     * Rating Service.
+     */
+    private RatingServiceInterface $ratingService;
+
+    /**
+     * Tea Service.
+     */
+    private TeaRepository $teaRepository;
+
+    /**
+     * Constructor.
+     *
+     * @param RatingServiceInterface $ratingService Rating Service
+     * @param TeaRepository          $teaRepository Tea Repository
+     */
+    public function __construct(RatingServiceInterface $ratingService, TeaRepository $teaRepository)
+    {
+        $this->ratingService = $ratingService;
+        $this->teaRepository = $teaRepository;
+    }
+
     /**
      * Load data.
      *
@@ -27,7 +51,7 @@ class RatingFixtures extends AbstractBaseFixtures implements DependentFixtureInt
             return;
         }
 
-        $this->createMany(500, 'ratings', function () {
+        $this->createMany(1000, 'ratings', function () {
 
             $rating = new Rating();
 
@@ -65,6 +89,11 @@ class RatingFixtures extends AbstractBaseFixtures implements DependentFixtureInt
         });
 
         $this->manager->flush();
+
+        $teas = $this->teaRepository->queryAll();
+        foreach ($teas as $tea) {
+            $this->ratingService->calculateAverateRating($tea);
+        }
     }
 
     /**

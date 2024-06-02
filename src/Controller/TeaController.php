@@ -10,11 +10,13 @@ use App\Entity\Tea;
 use App\Entity\User;
 use App\Form\Type\TeaType;
 use App\Service\RatingServiceInterface;
+use App\Service\TealistServiceInterface;
 use App\Service\TeaServiceInterface;
 use Form\Type\RatingType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,6 +34,11 @@ class TeaController extends AbstractController
     private TeaServiceInterface $teaService;
 
     /**
+     * Tealist service.
+     */
+    private TealistServiceInterface $tealistService;
+
+    /**
      * Rating service.
      */
     private RatingServiceInterface $ratingService;
@@ -47,9 +54,10 @@ class TeaController extends AbstractController
      * @param TeaServiceInterface $teaService Tea service
      * @param TranslatorInterface $translator Translator
      */
-    public function __construct(TeaServiceInterface $teaService, RatingServiceInterface $ratingService, TranslatorInterface $translator)
+    public function __construct(TeaServiceInterface $teaService, TealistServiceInterface $tealistService, RatingServiceInterface $ratingService, TranslatorInterface $translator)
     {
         $this->teaService = $teaService;
+        $this->tealistService = $tealistService;
         $this->ratingService = $ratingService;
         $this->translator = $translator;
     }
@@ -64,6 +72,18 @@ class TeaController extends AbstractController
     #[Route(name: 'tea_index', methods: 'GET')]
     public function index(Request $request): Response
     {
+        $form = $this->createFormBuilder()
+            ->add('search', TextType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $search = $form["search"]->getData();
+
+            return $this->redirectToRoute('tea_show', ['id' => $tea->getId()]);
+        }
+
         $filters = $this->getFilters($request);
         /** @var User $user * */
         $user = $this->getUser();
@@ -89,20 +109,41 @@ class TeaController extends AbstractController
     {
         $user = $this->getUser();
         $rating = $this->ratingService->findPreviousRating($user, $tea);
+        $tealists = $this->tealistService->findAllByAuthor($user);
+
         if (null === $rating) {
             $rating = new Rating();
             $rating->setAuthor($user);
             $rating->setTea($tea);
         }
-//        var_dump($rating);
-        $form = $this->createForm(
+
+        $ratingForm = $this->createForm(
             RatingType::class,
             $rating,
             ['action' => $this->generateUrl('tea_show', ['id' => $tea->getId()])]
         );
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        $tealistForm = $this->createForm(
+            RatingType::class,
+            $rating,
+            ['action' => $this->generateUrl('tea_show', ['id' => $tea->getId()])]
+        );
+
+        $ratingForm->handleRequest($request);
+        $tealistForm->handleRequest($request);
+
+        if ($ratingForm->isSubmitted() && $ratingForm->isValid()) {
+            $this->ratingService->save($rating);
+
+            $this->addFlash(
+                'success',
+                $this->translator->trans('message.created_successfully')
+            );
+
+            return $this->redirectToRoute('tea_show', ['id' => $tea->getId()]);
+        }
+
+        if ($tealistForm->isSubmitted() && $tealistForm->isValid()) {
             $this->ratingService->save($rating);
 
             $this->addFlash(
@@ -114,8 +155,10 @@ class TeaController extends AbstractController
         }
 
         return $this->render('tea/show.html.twig', [
-            'form' => $form->createView(),
+            'ratingForm' => $ratingForm->createView(),
+            'tealistForm' => $tealistForm->createView(),
             'tea' => $tea,
+            'tealists' => $tealists,
         ]);
     }
 
@@ -255,6 +298,8 @@ class TeaController extends AbstractController
         $filters = [];
         $filters['category_id'] = $request->query->getInt('filters_category_id');
         $filters['tag_id'] = $request->query->getInt('filters_tag_id');
+        $filters['tealist_id'] = $request->query->getInt('filters_tealist_id');
+        $filters['tea_name'] = $request->query->getInt('filters_tea_name');
 
         return $filters;
     }

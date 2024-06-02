@@ -5,10 +5,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use App\Service\UserServiceInterface;
 use Form\Type\UpdatePasswordType;
-use Form\Type\UserType;
+use App\Form\Type\UserType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -136,6 +137,10 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $isAdmin = $form->get('admin')->getData();
+            if ($isAdmin) {
+                $user->setRoles([UserRole::ROLE_USER->value, UserRole::ROLE_ADMIN->value]);
+            }
             $this->userService->save($user);
 
             $this->addFlash(

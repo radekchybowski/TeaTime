@@ -4,6 +4,7 @@
 {% block section_title %}
     <h1 class="text-left">{{ tea.title }}</h1>
     <p>Rating: {{ tea.currentRating }}</p>
+    <div class="d-flex flex-column">
     {{ form_start(form) }}
         {% if false == form.vars.valid %}
             {% include 'default/_single_alert_message.html.twig' with {
@@ -11,11 +12,21 @@
                 message: 'message.form_error'|trans,
             }%}
         {% endif %}
-        {{ form_widget(form) }}
+        <label class="form-label" for="{{ field_name(form.rating) }}">Your rating</label>
+        <select name="{{ field_name(form.rating) }}" class="form-control">
+            {% for label, value in field_choices(form.rating) %}
+                {% if field_value(form.rating) is same as value %}
+                    <option value="{{ value }}" selected="selected">{{ label }}</option>
+                {% else %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
         <div class="form-group row float-sm-right">
             <input type="submit" value="{{ 'label.rating.submit'|trans }}" class="btn btn-primary"/>
         </div>
     {{ form_end(form) }}
+    </div>
     <a class="btn btn-success" href="{{ path('tea_create') }}">{{ 'button.tea.action_create'|trans }}</a>
 {% endblock %}
 {% block main %}
@@ -117,6 +128,10 @@
         <a class="btn btn-secondary" href="{{ url('comment_create', {id: tea.id }) }}" title="{{ 'action.create.comment'|trans }}">
             {{ 'action.create.comment'|trans }}
         </a>
+
+        {% for tealist in tealists %}
+            <p>{{ tealist.title }}</p>
+        {% endfor %}
     {% else %}
         <p>{{ 'message.record_not_exist'|trans }}</p>
     {%  endif %}

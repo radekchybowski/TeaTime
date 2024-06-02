@@ -161,6 +161,17 @@ class TeaService implements TeaServiceInterface
             }
         }
 
+        if (!empty($filters['tealist_id'])) {
+            $tealist = $this->tealistService->findOneById($filters['tealist_id']);
+            if (null !== $tealist) {
+                $resultFilters['tealist'] = $tealist;
+            }
+        }
+
+        if (!empty($filters['tea_name'])) {
+            $resultFilters['tea_name'] = $filters['tea_name'];
+        }
+
         return $resultFilters;
     }
 }
