@@ -2,6 +2,6 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
-#hello_index:
-#  path: /hello
-#  controller: App\Controller\HelloController::index
+api_teas:
+  path: /api/teas
+  controller: App\Controller\TeaApiController::getCollection

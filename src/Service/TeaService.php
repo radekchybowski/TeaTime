@@ -87,6 +87,14 @@ class TeaService implements TeaServiceInterface
     }
 
     /**
+     * @return Tea[]
+     */
+    public function getAll(): array
+    {
+        return $this->teaRepository->findAll();
+    }
+
+    /**
      * Find by id.
      *
      * @param int $id Tea id

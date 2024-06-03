@@ -5,17 +5,17 @@
     <h1 class="text-left">{{ tea.title }}</h1>
     <p>Rating: {{ tea.currentRating }}</p>
     <div class="d-flex flex-column">
-    {{ form_start(form) }}
-        {% if false == form.vars.valid %}
+    {{ form_start(ratingForm) }}
+        {% if false == ratingForm.vars.valid %}
             {% include 'default/_single_alert_message.html.twig' with {
                 type: 'danger',
                 message: 'message.form_error'|trans,
             }%}
         {% endif %}
-        <label class="form-label" for="{{ field_name(form.rating) }}">Your rating</label>
-        <select name="{{ field_name(form.rating) }}" class="form-control">
-            {% for label, value in field_choices(form.rating) %}
-                {% if field_value(form.rating) is same as value %}
+        <label class="form-label" for="{{ field_name(ratingForm.rating) }}">Your rating</label>
+        <select name="{{ field_name(ratingForm.rating) }}" class="form-control">
+            {% for label, value in field_choices(ratingForm.rating) %}
+                {% if field_value(ratingForm.rating) is same as value %}
                     <option value="{{ value }}" selected="selected">{{ label }}</option>
                 {% else %}
                     <option value="{{ value }}">{{ label }}</option>
@@ -25,7 +25,7 @@
         <div class="form-group row float-sm-right">
             <input type="submit" value="{{ 'label.rating.submit'|trans }}" class="btn btn-primary"/>
         </div>
-    {{ form_end(form) }}
+    {{ form_end(ratingForm) }}
     </div>
     <a class="btn btn-success" href="{{ path('tea_create') }}">{{ 'button.tea.action_create'|trans }}</a>
 {% endblock %}

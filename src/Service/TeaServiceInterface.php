@@ -26,6 +26,11 @@ interface TeaServiceInterface
     public function getPaginatedList(int $page, User $author): PaginationInterface;
 
     /**
+     * @return array
+     */
+    public function getAll();
+
+    /**
      * Save entity.
      *
      * @param Tea $tea Tea entity
