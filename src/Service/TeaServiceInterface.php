@@ -28,7 +28,7 @@ interface TeaServiceInterface
     /**
      * @return array
      */
-    public function getAll();
+    public function getAll(): array;
 
     /**
      * Save entity.
