@@ -5,7 +5,6 @@
 
 namespace App\Controller;
 
-use ApiPlatform\Api\IriConverterInterface;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +23,7 @@ class ApiSecurityController extends AbstractController
      * @return Response HTTP Response
      */
     #[Route(path: '/login', name: 'api_login', methods: ['POST'])]
-    public function login(IriConverterInterface $iriConverter): Response
+    public function login(): Response
     {
         $user = $this->getUser();
         assert($user instanceof User);
@@ -35,9 +34,7 @@ class ApiSecurityController extends AbstractController
             ], 401);
         }
 
-        return new Response(null, 204, [
-            'Location' => $iriConverter->getIriFromResource($user)
-        ]);
+        return $this->json(['user' => $user->getEmail()]);
     }
 
     /**
