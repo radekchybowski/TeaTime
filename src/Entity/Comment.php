@@ -10,6 +10,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -33,6 +34,7 @@ class Comment
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Type('string')]
     #[Assert\Length(min: 3, max: 255)]
+    #[Groups('read_Tea')]
     private ?string $title = null;
 
     /**
@@ -41,6 +43,7 @@ class Comment
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Type('string')]
     #[Assert\NotBlank]
+    #[Groups('read_Tea')]
     private ?string $content = null;
 
     /**
@@ -49,6 +52,7 @@ class Comment
     #[ORM\Column(type: 'datetime_immutable')]
     #[Assert\Type(\DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'create')]
+    #[Groups('read_Tea')]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
@@ -67,6 +71,7 @@ class Comment
     #[ORM\JoinColumn(name: 'author_id', referencedColumnName: 'id', nullable: false)]
     #[Assert\NotBlank]
     #[Assert\Type(User::class)]
+    #[Groups('read_Tea')]
     private ?User $author = null;
 
     /**

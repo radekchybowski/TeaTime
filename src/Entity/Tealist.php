@@ -5,6 +5,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TealistRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,6 +21,31 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ORM\Entity(repositoryClass: TealistRepository::class)]
 #[ORM\Table(name: 'tealists')]
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'patch', 'delete'],
+    attributes: [
+        'pagination_items_per_page' => 10,
+        'order' => [
+            'createdAt' => 'DESC',
+        ],
+    ],
+),
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'title' => SearchFilter::STRATEGY_PARTIAL,
+            'author.id' => SearchFilter::STRATEGY_EXACT,
+        ]
+    ),
+    ApiFilter(
+        OrderFilter::class,
+        properties: [
+            'createdAt',
+            'currentRating',
+        ]
+    )
+]
 class Tealist
 {
     /**

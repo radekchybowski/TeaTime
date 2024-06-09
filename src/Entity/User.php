@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -40,6 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
+    #[Groups('read_Tea')]
     private ?string $email;
 
     /**
@@ -73,12 +75,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * First name.
      */
     #[ORM\Column(length: 64, nullable: true)]
+    #[Groups('read_Tea')]
     private ?string $name = null;
 
     /**
      * Surname.
      */
     #[ORM\Column(length: 64, nullable: true)]
+    #[Groups('read_Tea')]
     private ?string $surname = null;
 
     /**
@@ -101,7 +105,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function __construct()
     {
-        $this->collections = new ArrayCollection();
+//        $this->collections = new ArrayCollection();
         $this->apiTokens = new ArrayCollection();
     }
 
@@ -330,13 +334,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Collection>
-     */
-    public function getCollections(): Collection
-    {
-        return $this->collections;
-    }
+//    /**
+//     * @return Collection<int, Collection>
+//     */
+//    public function getCollections(): Collection
+//    {
+//        return $this->collections;
+//    }
 
     /**
      * Setter for Tealist

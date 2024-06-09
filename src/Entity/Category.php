@@ -5,11 +5,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -21,7 +25,29 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'categories')]
 #[ORM\UniqueConstraint(name: 'uq_categories_title', columns: ['title'])]
 #[UniqueEntity(fields: ['title'])]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'patch', 'delete'],
+    attributes: [
+        'pagination_items_per_page' => 30,
+        'order' => [
+            'title' => 'ASC',
+        ],
+    ],
+),
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'title' => SearchFilter::STRATEGY_PARTIAL,
+        ]
+    ),
+    ApiFilter(
+        OrderFilter::class,
+        properties: [
+            'createdAt'
+        ]
+    )
+]
 class Category
 {
     /**
@@ -30,6 +56,7 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('read_Tea')]
     private ?int $id = null;
 
     /**
@@ -55,6 +82,7 @@ class Category
     #[Assert\Type('string')]
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 64)]
+    #[Groups('read_Tea')]
     private ?string $title = null;
 
     /**

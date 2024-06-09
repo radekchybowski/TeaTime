@@ -9,6 +9,7 @@ use App\Repository\TagRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -24,6 +25,7 @@ class Tag
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('read_Tea')]
     private ?int $id = null;
 
     /**
@@ -49,6 +51,7 @@ class Tag
     #[Assert\Type('string')]
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 64)]
+    #[Groups('read_Tea')]
     private ?string $title = null;
 
     /**

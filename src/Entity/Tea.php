@@ -5,13 +5,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\TeaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -20,8 +24,35 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: TeaRepository::class)]
 #[ORM\Table(name: 'teas')]
 #[ApiResource(
-    collectionOperations: ['get', 'post']
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'patch', 'delete'],
+    attributes: [
+        'pagination_items_per_page' => 10,
+        'order' => [
+            'createdAt' => 'DESC',
+        ],
+    ],
+    normalizationContext: ['groups' => ['read_Tea']],
 ),
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'title' => SearchFilter::STRATEGY_PARTIAL,
+            'category.title' => SearchFilter::STRATEGY_PARTIAL,
+            'category.id' => SearchFilter::STRATEGY_EXACT,
+            'tags' => SearchFilter::STRATEGY_PARTIAL,
+            'author.id' => SearchFilter::STRATEGY_EXACT,
+            'ingredients' => SearchFilter::STRATEGY_PARTIAL,
+            'vendor' => SearchFilter::STRATEGY_PARTIAL,
+        ]
+    ),
+    ApiFilter(
+        OrderFilter::class,
+        properties: [
+            'createdAt',
+            'currentRating',
+        ]
+    )
 ]
 class Tea
 {
@@ -31,6 +62,7 @@ class Tea
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups('read_Tea')]
     private ?int $id = null;
 
     /**
@@ -39,6 +71,7 @@ class Tea
     #[ORM\Column(type: 'datetime_immutable')]
     #[Assert\Type(\DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'create')]
+    #[Groups('read_Tea')]
     private ?\DateTimeImmutable $createdAt;
 
     /**
@@ -47,6 +80,7 @@ class Tea
     #[ORM\Column(type: 'datetime_immutable')]
     #[Assert\Type(\DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'update')]
+    #[Groups('read_Tea')]
     private ?\DateTimeImmutable $updatedAt;
 
     /**
@@ -56,6 +90,7 @@ class Tea
     #[Assert\Type('string')]
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 255)]
+    #[Groups('read_Tea')]
     private ?string $title;
 
     /**
@@ -65,6 +100,7 @@ class Tea
     #[Assert\Type(Category::class)]
     #[Assert\NotBlank]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('read_Tea')]
     private ?Category $category;
 
     /**
@@ -73,6 +109,7 @@ class Tea
     #[Assert\Valid]
     #[ORM\ManyToMany(targetEntity: Tag::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[ORM\JoinTable(name: 'teas_tags')]
+    #[Groups('read_Tea')]
     private ?Collection $tags;
 
     /**
@@ -82,6 +119,7 @@ class Tea
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotBlank]
     #[Assert\Type(User::class)]
+    #[Groups('read_Tea')]
     private ?User $author;
 
     /**
@@ -89,48 +127,56 @@ class Tea
      */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\Type('string')]
+    #[Groups('read_Tea')]
     private ?string $description = null;
 
     /**
      * Ingredients.
      */
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('read_Tea')]
     private ?string $ingredients = null;
 
     /**
      * Steep Time in seconds.
      */
     #[ORM\Column(nullable: true)]
+    #[Groups('read_Tea')]
     private ?int $steepTime = null;
 
     /**
      * Steep temperature in Celsius.
      */
     #[ORM\Column(nullable: true)]
+    #[Groups('read_Tea')]
     private ?int $steepTemp = null;
 
     /**
      * Region of origin.
      */
     #[ORM\Column(length: 64, nullable: true)]
+    #[Groups('read_Tea')]
     private ?string $region = null;
 
     /**
      * Vendor/Store.
      */
     #[ORM\Column(length: 64, nullable: true)]
+    #[Groups('read_Tea')]
     private ?string $vendor = null;
 
     /**
      * Comments.
      */
     #[ORM\OneToMany(mappedBy: 'tea', targetEntity: Comment::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[Groups('read_Tea')]
     private ?Collection $comments = null;
 
     /**
      * Current rating average from all ratings.
      */
     #[ORM\Column(nullable: true)]
+    #[Groups('read_Tea')]
     private ?float $currentRating = null;
 
     /**
