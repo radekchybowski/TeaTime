@@ -6,7 +6,6 @@
 namespace App\Entity;
 
 use App\Repository\RatingRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -54,7 +53,7 @@ class Rating
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
-    #[ORM\ManyToOne(targetEntity: Tea::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\ManyToOne(targetEntity: Tea::class, cascade: ['remove'], fetch: 'EXTRA_LAZY')]
     #[Assert\Type(Tea::class)]
     #[Assert\NotBlank]
     #[ORM\JoinColumn(nullable: false)]

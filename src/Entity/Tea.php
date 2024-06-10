@@ -32,7 +32,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             'createdAt' => 'DESC',
         ],
     ],
-    normalizationContext: ['groups' => ['read_Tea']],
+    denormalizationContext: ['groups' => ['write_Tea']],
+    normalizationContext: ['groups' => ['read_Tea']]
 ),
     ApiFilter(
         SearchFilter::class,
@@ -90,7 +91,7 @@ class Tea
     #[Assert\Type('string')]
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 255)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?string $title;
 
     /**
@@ -100,7 +101,7 @@ class Tea
     #[Assert\Type(Category::class)]
     #[Assert\NotBlank]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?Category $category;
 
     /**
@@ -109,7 +110,7 @@ class Tea
     #[Assert\Valid]
     #[ORM\ManyToMany(targetEntity: Tag::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[ORM\JoinTable(name: 'teas_tags')]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?Collection $tags;
 
     /**
@@ -119,7 +120,7 @@ class Tea
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotBlank]
     #[Assert\Type(User::class)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?User $author;
 
     /**
@@ -127,50 +128,56 @@ class Tea
      */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\Type('string')]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?string $description = null;
 
     /**
      * Ingredients.
      */
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?string $ingredients = null;
 
     /**
      * Steep Time in seconds.
      */
     #[ORM\Column(nullable: true)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?int $steepTime = null;
 
     /**
      * Steep temperature in Celsius.
      */
     #[ORM\Column(nullable: true)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?int $steepTemp = null;
 
     /**
      * Region of origin.
      */
     #[ORM\Column(length: 64, nullable: true)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?string $region = null;
 
     /**
      * Vendor/Store.
      */
     #[ORM\Column(length: 64, nullable: true)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?string $vendor = null;
 
     /**
      * Comments.
      */
     #[ORM\OneToMany(mappedBy: 'tea', targetEntity: Comment::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'write_Tea'])]
     private ?Collection $comments = null;
+
+    /**
+     * Ratings.
+     */
+    #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'tea', fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    private ?Collection $ratings;
 
     /**
      * Current rating average from all ratings.
@@ -186,6 +193,7 @@ class Tea
     {
         $this->tags = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
     }
 
     /**
@@ -525,6 +533,52 @@ class Tea
     }
 
     /**
+     * Getter for Ratings collection.
+     *
+     * @return Collection<int, Rating> Ratings
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    /**
+     * Adding another rating.
+     *
+     * @param Rating $rating Rating
+     *
+     * @return $this
+     */
+    public function addRating(Rating $rating): self
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings->add($rating);
+            $rating->setTea($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removing one of the ratings.
+     *
+     * @param Rating $rating Rating
+     *
+     * @return $this
+     */
+    public function removeRating(Rating $rating): self
+    {
+        if ($this->ratings->removeElement($rating)) {
+            // set the owning side to null (unless already changed)
+            if ($rating->getTea() === $this) {
+                $rating->setTea(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Getter for current rating.
      *
      * @return float|null Current rating
@@ -546,5 +600,13 @@ class Tea
         $this->currentRating = $currentRating;
 
         return $this;
+    }
+
+    #[ORM\PreRemove]
+    public function removeRatings(): void
+    {
+        foreach ($this->ratings as $rating) {
+            $this->removeRating($rating);
+        }
     }
 }

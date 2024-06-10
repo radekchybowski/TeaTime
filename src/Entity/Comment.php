@@ -5,8 +5,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\CommentRepository;
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -18,6 +21,29 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ORM\Table(name: 'comments')]
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'patch', 'delete'],
+    attributes: [
+        'pagination_items_per_page' => 10,
+        'order' => [
+            'title' => 'ASC',
+        ],
+    ],
+),
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'title' => SearchFilter::STRATEGY_PARTIAL,
+        ]
+    ),
+    ApiFilter(
+        OrderFilter::class,
+        properties: [
+            'createdAt',
+        ]
+    )
+]
 class Comment
 {
     /**
