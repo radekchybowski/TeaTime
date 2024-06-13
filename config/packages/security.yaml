@@ -19,18 +19,21 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        api:
-            pattern: ^/api/
-            stateless: false
+        login:
+            pattern: ^/api/login
+            stateless: true
             provider: app_user_provider
             json_login:
                 check_path: api_login
                 username_path: email
                 password_path: password
-            logout:
-                path: api_logout
-                # where to redirect after logout
-                target: api_login
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        api:
+            pattern: ^/api
+            stateless: true
+            jwt: ~
+
 
         main:
             pattern: ^/

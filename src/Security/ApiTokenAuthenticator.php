@@ -2,43 +2,90 @@
 
 namespace App\Security;
 
+use App\Repository\UserRepository;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
+use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
-class ApiTokenAuthenticator extends AbstractAuthenticator
+class ApiTokenAuthenticator extends AbstractGuardAuthenticator
 {
-    public function supports(Request $request): ?bool
+    protected JWTEncoderInterface $encoder;
+    protected UserRepository $userRepository;
+
+    public function __construct(JWTEncoderInterface $encoder, UserRepository $userRepository)
     {
-        return $request->headers->contains('Content-Type','application/json');
+        $this->encoder = $encoder;
+        $this->userRepository = $userRepository;
     }
 
-    public function authenticate(Request $request): Passport
+    public function supports(Request $request)
     {
-        // TODO: Implement authenticate() method.
+        return $request->headers->has('Authorization');
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    public function getCredentials(Request $request)
     {
-        // TODO: Implement onAuthenticationSuccess() method.
+        $extractor = new AuthorizationHeaderTokenExtractor(
+            'Bearer',
+            'Authorization'
+        );
+
+        $token = $extractor->extract($request);
+
+        if (!$token) {
+            return;
+        }
+
+        return $token;
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
+    /**
+     * @return UserInterface|void|null
+     *
+     * @throws JWTDecodeFailureException
+     */
+    public function getUser($credentials, UserProviderInterface $userProvider)
+    {
+        $data = $this->encoder->decode($credentials);
+
+        if (false === $data) {
+            throw new CustomUserMessageAuthenticationException('Invalid Token');
+        }
+
+        $email = $data['email'];
+
+        return $this->userRepository->findOneBy(['email' => $email]);
+    }
+
+    public function checkCredentials($credentials, UserInterface $user)
+    {
+        return true;
+    }
+
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         // TODO: Implement onAuthenticationFailure() method.
     }
 
-//    public function start(Request $request, AuthenticationException $authException = null): Response
-//    {
-//        /*
-//         * If you would like this class to control what happens when an anonymous user accesses a
-//         * protected page (e.g. redirect to /login), uncomment this method and make this class
-//         * implement Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface.
-//         *
-//         * For more details, see https://symfony.com/doc/current/security/experimental_authenticators.html#configuring-the-authentication-entry-point
-//         */
-//    }
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    {
+        // TODO: Implement onAuthenticationSuccess() method.
+    }
+
+    public function supportsRememberMe()
+    {
+        return false;
+    }
+
+    public function start(Request $request, ?AuthenticationException $authException = null)
+    {
+        // TODO: Implement start() method.
+    }
 }
