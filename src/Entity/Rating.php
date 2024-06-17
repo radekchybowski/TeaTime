@@ -5,6 +5,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\RatingRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -15,6 +19,32 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ORM\Entity(repositoryClass: RatingRepository::class)]
 #[ORM\Table(name: 'ratings')]
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'put', 'delete'],
+    attributes: [
+        'pagination_items_per_page' => 10,
+        'order' => [
+            'createdAt' => 'DESC',
+        ],
+    ],
+),
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'rating' => SearchFilter::STRATEGY_EXACT,
+            'author.id' => SearchFilter::STRATEGY_EXACT,
+            'tea.id' => SearchFilter::STRATEGY_EXACT,
+        ]
+    ),
+//    ApiFilter(
+//        OrderFilter::class,
+//        properties: [
+//            'createdAt',
+//            'currentRating',
+//        ]
+//    )
+]
 class Rating
 {
     #[ORM\Id]

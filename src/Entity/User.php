@@ -5,7 +5,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Entity\Enum\UserRole;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -24,7 +27,34 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'users')]
 #[ORM\UniqueConstraint(name: 'email_idx', columns: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'patch', 'delete'],
+    attributes: [
+        'pagination_items_per_page' => 10,
+        'order' => [
+            'id' => 'DESC',
+        ],
+    ],
+    denormalizationContext: ['groups' => ['write_User']],
+    normalizationContext: ['groups' => ['read_User']]
+),
+    ApiFilter(
+        SearchFilter::class,
+        properties: [
+            'email' => SearchFilter::STRATEGY_EXACT,
+            'id' => SearchFilter::STRATEGY_EXACT,
+            'name' => SearchFilter::STRATEGY_PARTIAL,
+            'surname' => SearchFilter::STRATEGY_PARTIAL,
+        ]
+    ),
+    ApiFilter(
+        OrderFilter::class,
+        properties: [
+            'id',
+        ]
+    )
+]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
@@ -33,6 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['read_User', 'read_Tea'])]
     private ?int $id = null;
 
     /**
@@ -41,7 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
-    #[Groups('read_Tea')]
+    #[Groups(['read_User', 'read_Tea'])]
     private ?string $email;
 
     /**
@@ -50,6 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var array<int, string> Roles
      */
     #[ORM\Column(type: 'json')]
+    #[Groups(['read_User'])]
     private array $roles = [];
 
     /**
@@ -69,20 +101,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Avatar.
      */
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: Avatar::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
+    #[Groups(['read_User'])]
     private ?Avatar $avatar = null;
 
     /**
      * First name.
      */
     #[ORM\Column(length: 64, nullable: true)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'read_User', 'write_User'])]
     private ?string $name = null;
 
     /**
      * Surname.
      */
     #[ORM\Column(length: 64, nullable: true)]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'read_User', 'write_User'])]
     private ?string $surname = null;
 
     /**
@@ -94,6 +127,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Tealists.
      */
+    #[Groups(['read_User', 'write_User'])]
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Tealist::class, orphanRemoval: true)]
     private ?Collection $tealists;
 

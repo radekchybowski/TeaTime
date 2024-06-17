@@ -127,7 +127,7 @@ class RatingService implements RatingServiceInterface
             $sum += $score;
             $i++;
         }
-        $average = round($sum / $i, 2);
+        $average = round($sum / $i, 1);
         $tea->setCurrentRating($average);
         $this->teaService->save($tea);
     }

@@ -43,6 +43,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             'category.id' => SearchFilter::STRATEGY_EXACT,
             'tags' => SearchFilter::STRATEGY_PARTIAL,
             'author.id' => SearchFilter::STRATEGY_EXACT,
+            'author.email' => SearchFilter::STRATEGY_EXACT,
             'ingredients' => SearchFilter::STRATEGY_PARTIAL,
             'vendor' => SearchFilter::STRATEGY_PARTIAL,
         ]
@@ -184,7 +185,7 @@ class Tea
      */
     #[ORM\Column(nullable: true)]
     #[Groups('read_Tea')]
-    private ?float $currentRating = null;
+    private ?float $currentRating = 0;
 
     /**
      * Constructor.
