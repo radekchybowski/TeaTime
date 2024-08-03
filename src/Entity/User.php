@@ -63,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['read_User', 'read_Tea'])]
+    #[Groups(['read_User', 'read_Tea', 'read_Rating'])]
     private ?int $id = null;
 
     /**
@@ -135,11 +135,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $apiTokens;
 
     /**
+     * Ratings.
+     */
+    #[ORM\OneToMany(mappedBy: 'tea', targetEntity: Rating::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    private ?Collection $ratings;
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
 //        $this->collections = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
         $this->apiTokens = new ArrayCollection();
     }
 
@@ -411,6 +418,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * Getter for Ratings collection.
+     *
+     * @return Collection<int, Rating> Ratings
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    /**
+     * Adding another rating.
+     *
+     * @param Rating $rating Rating
+     *
+     * @return $this
+     */
+    public function addRating(Rating $rating): self
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings->add($rating);
+            $rating->setTea($this);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * Removing one of the ratings.
+     *
+     * @param Rating $rating Rating
+     *
+     * @return $this
+     */
+    public function removeRating(Rating $rating): self
+    {
+        if ($this->ratings->removeElement($rating)) {
+            // set the owning side to null (unless already changed)
+            if ($rating->getTea() === $this) {
+                $rating->setTea(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection<int, ApiToken>
      */
     public function getApiTokens(): Collection
@@ -438,5 +492,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    #[ORM\PreRemove]
+    public function removeRatings(): void
+    {
+        foreach ($this->ratings as $rating) {
+            $this->removeRating($rating);
+        }
     }
 }

@@ -12,6 +12,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\RatingRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -28,6 +29,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             'createdAt' => 'DESC',
         ],
     ],
+//    denormalizationContext: ['groups' => ['write_Rating']],
+    normalizationContext: ['groups' => ['read_Rating']]
 ),
     ApiFilter(
         SearchFilter::class,
@@ -37,19 +40,13 @@ use Symfony\Component\Validator\Constraints as Assert;
             'tea.id' => SearchFilter::STRATEGY_EXACT,
         ]
     ),
-//    ApiFilter(
-//        OrderFilter::class,
-//        properties: [
-//            'createdAt',
-//            'currentRating',
-//        ]
-//    )
 ]
 class Rating
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['read_Rating'])]
     private ?int $id = null;
 
     /**
@@ -75,18 +72,21 @@ class Rating
         'min' => 0,
         'max' => 10,
     ])]
+    #[Groups(['read_Rating'])]
     private ?int $rating = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY')]
     #[Assert\Type(User::class)]
     #[Assert\NotBlank]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read_Rating'])]
     private ?User $author = null;
 
-    #[ORM\ManyToOne(targetEntity: Tea::class, cascade: ['remove'], fetch: 'EXTRA_LAZY')]
+    #[ORM\ManyToOne(targetEntity: Tea::class, fetch: 'EXTRA_LAZY')]
     #[Assert\Type(Tea::class)]
     #[Assert\NotBlank]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read_Rating'])]
     private ?Tea $tea = null;
 
     public function getId(): ?int

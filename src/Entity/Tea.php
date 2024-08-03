@@ -64,7 +64,7 @@ class Tea
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups('read_Tea')]
+    #[Groups(['read_Tea', 'read_Rating'])]
     private ?int $id = null;
 
     /**
@@ -177,7 +177,7 @@ class Tea
     /**
      * Ratings.
      */
-    #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'tea', fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'tea', targetEntity: Rating::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     private ?Collection $ratings;
 
     /**

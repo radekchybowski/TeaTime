@@ -52,6 +52,7 @@ class Comment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups('read_Tea')]
     private ?int $id = null;
 
     /**
