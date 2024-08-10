@@ -7,9 +7,9 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\RatingRepository;
+use App\Service\RatingServiceInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Class Rating.
  */
 #[ORM\Entity(repositoryClass: RatingRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'ratings')]
 #[ApiResource(
     collectionOperations: ['get', 'post'],
@@ -29,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             'createdAt' => 'DESC',
         ],
     ],
-//    denormalizationContext: ['groups' => ['write_Rating']],
+    //    denormalizationContext: ['groups' => ['write_Rating']],
     normalizationContext: ['groups' => ['read_Rating']]
 ),
     ApiFilter(
@@ -65,6 +66,9 @@ class Rating
     #[Gedmo\Timestampable(on: 'update')]
     private ?\DateTimeImmutable $updatedAt;
 
+    /**
+     * Rating from 1 to 10.
+     */
     #[ORM\Column(type: 'integer')]
     #[Assert\Type('integer')]
     #[Assert\NotBlank]
@@ -75,6 +79,9 @@ class Rating
     #[Groups(['read_Rating'])]
     private ?int $rating = null;
 
+    /**
+     * Rating's author.
+     */
     #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY')]
     #[Assert\Type(User::class)]
     #[Assert\NotBlank]
@@ -82,6 +89,9 @@ class Rating
     #[Groups(['read_Rating'])]
     private ?User $author = null;
 
+    /**
+     * Tea rated.
+     */
     #[ORM\ManyToOne(targetEntity: Tea::class, fetch: 'EXTRA_LAZY')]
     #[Assert\Type(Tea::class)]
     #[Assert\NotBlank]
@@ -153,4 +163,11 @@ class Rating
 
         return $this;
     }
+
+//    #[ORM\PostPersist]
+//    #[ORM\PostUpdate]
+//    public function updateCurrentRating($args, RatingServiceInterface $ratingService): void
+//    {
+//        $ratingService->calculateAverateRating($this->tea);
+//    }
 }

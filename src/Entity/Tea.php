@@ -22,6 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Class Tea.
  */
 #[ORM\Entity(repositoryClass: TeaRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'teas')]
 #[ApiResource(
     collectionOperations: ['get', 'post'],

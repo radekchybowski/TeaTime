@@ -67,7 +67,7 @@ class RatingFixtures extends AbstractBaseFixtures implements DependentFixtureInt
                 )
             );
 
-            $rating->setRating($this->faker->numberBetween(0, 10));
+            $rating->setRating($this->faker->numberBetween(1, 10));
 
             /**
              * Assigning random user as author.
