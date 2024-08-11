@@ -64,5 +64,5 @@ interface RatingServiceInterface
      *
      * @return void
      */
-    public function calculateAverateRating(Tea $tea) : void;
+    public function calculateAverageRating(Tea $tea) : void;
 }

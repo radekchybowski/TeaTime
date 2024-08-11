@@ -34,6 +34,6 @@ class RatingUpdateListener
      */
     public function postUpdate(Rating $rating): void
     {
-        $this->service->calculateAverateRating($rating->getTea());
+        $this->service->calculateAverageRating($rating->getTea());
     }
 }

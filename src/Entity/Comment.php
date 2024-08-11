@@ -23,7 +23,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'comments')]
 #[ApiResource(
     collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete'],
+    itemOperations: [
+        'get',
+        'patch' => [
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('EDIT', object)",
+        ],
+        'delete' => [
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('DELETE', object)",
+        ],
+    ],
     attributes: [
         'pagination_items_per_page' => 10,
         'order' => [
@@ -35,6 +43,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         SearchFilter::class,
         properties: [
             'title' => SearchFilter::STRATEGY_PARTIAL,
+            'tea' => SearchFilter::STRATEGY_EXACT,
+            'author' => SearchFilter::STRATEGY_EXACT,
         ]
     ),
     ApiFilter(

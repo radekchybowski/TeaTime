@@ -65,7 +65,7 @@ class RatingService implements RatingServiceInterface
         } else {
             $this->ratingRepository->save($rating);
         }
-        $this->calculateAverateRating($rating->getTea());
+        $this->calculateAverageRating($rating->getTea());
     }
 
     /**
@@ -113,7 +113,7 @@ class RatingService implements RatingServiceInterface
      *
      * @return void
      */
-    public function calculateAverateRating(Tea $tea) : void
+    public function calculateAverageRating(Tea $tea) : void
     {
         $sum = 0;
         $i = 0;

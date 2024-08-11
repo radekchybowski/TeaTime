@@ -92,7 +92,8 @@ class RatingFixtures extends AbstractBaseFixtures implements DependentFixtureInt
 
         $teas = $this->teaRepository->queryAll();
         foreach ($teas as $tea) {
-            $this->ratingService->calculateAverateRating($tea);
+            echo $tea;
+            $this->ratingService->calculateAverageRating($tea);
         }
     }
 

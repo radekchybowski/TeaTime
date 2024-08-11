@@ -26,8 +26,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'uq_categories_title', columns: ['title'])]
 #[UniqueEntity(fields: ['title'])]
 #[ApiResource(
-    collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete'],
+    collectionOperations: [
+        'get',
+        'post' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+        ],
+    ],
+    itemOperations: [
+        'get',
+        'patch' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+        ],
+        'delete' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+        ],
+    ],
     attributes: [
         'pagination_items_per_page' => 30,
         'order' => [
@@ -44,7 +57,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ApiFilter(
         OrderFilter::class,
         properties: [
-            'createdAt'
+            'createdAt',
         ]
     )
 ]

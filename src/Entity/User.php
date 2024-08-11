@@ -28,8 +28,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'email_idx', columns: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 #[ApiResource(
-    collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete'],
+    collectionOperations: [
+        'get',
+        'post' => [
+            'path' => '/register',
+        ],
+    ],
+    itemOperations: [
+        'get',
+        'patch' => [
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('EDIT', object)",
+        ],
+        'delete' => [
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('DELETE', object)",
+        ],
+    ],
     attributes: [
         'pagination_items_per_page' => 10,
         'order' => [
@@ -145,7 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function __construct()
     {
-//        $this->collections = new ArrayCollection();
+        //        $this->collections = new ArrayCollection();
         $this->ratings = new ArrayCollection();
         $this->apiTokens = new ArrayCollection();
     }
@@ -375,16 +388,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-//    /**
-//     * @return Collection<int, Collection>
-//     */
-//    public function getCollections(): Collection
-//    {
-//        return $this->collections;
-//    }
+    //    /**
+    //     * @return Collection<int, Collection>
+    //     */
+    //    public function getCollections(): Collection
+    //    {
+    //        return $this->collections;
+    //    }
 
     /**
-     * Setter for Tealist
+     * Setter for Tealist.
      *
      * @param Tealist $tealist Tealist
      *
@@ -443,7 +456,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 
     /**
      * Removing one of the ratings.
