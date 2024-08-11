@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         'get',
-        'patch' => [
+        'put' => [
             'security' => "is_granted('ROLE_ADMIN')",
         ],
         'delete' => [

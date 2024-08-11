@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'tealists')]
 #[ApiResource(
     collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'patch', 'delete'],
+    itemOperations: ['get', 'put', 'delete'],
     attributes: [
         'pagination_items_per_page' => 10,
         'order' => [

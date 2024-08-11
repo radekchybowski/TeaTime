@@ -36,11 +36,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         'get',
-        'patch' => [
-            'security' => "is_granted('ROLE_ADMIN') or is_granted('EDIT', object)",
+        'put' => [
+            'security' => "is_granted('EDIT', object)",
         ],
         'delete' => [
-            'security' => "is_granted('ROLE_ADMIN') or is_granted('DELETE', object)",
+            'security' => "is_granted('DELETE', object)",
         ],
     ],
     attributes: [
