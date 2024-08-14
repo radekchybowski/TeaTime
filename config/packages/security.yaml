@@ -29,6 +29,18 @@ security:
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+#        register:
+#            pattern: ^/api/register
+#            stateless: true
+#            provider: app_user_provider
+#            json_login:
+#                check_path: api_login
+#                username_path: email
+#                password_path: password
+#                success_handler: lexik_jwt_authentication.handler.authentication_success
+#                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
         api:
             pattern: ^/api
             stateless: true
@@ -62,6 +74,7 @@ security:
         - { path: ^/login, roles: PUBLIC_ACCESS}
         - { path: ^/register, roles: PUBLIC_ACCESS}
         - { path: ^/api/login, roles: PUBLIC_ACCESS}
+        - { path: ^/api/register, roles: PUBLIC_ACCESS}
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY}
         - { path: ^/user, roles: ROLE_USER }
         - { path: ^/, roles: ROLE_USER}

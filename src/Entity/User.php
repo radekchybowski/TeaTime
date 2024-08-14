@@ -11,6 +11,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Entity\Enum\UserRole;
 use App\Repository\UserRepository;
+use App\State\RegistrationStateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -32,6 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         'get',
         'post' => [
             'path' => '/register',
+            'processor' => RegistrationStateProcessor::class,
         ],
     ],
     itemOperations: [
@@ -85,7 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email]
-    #[Groups(['read_User', 'read_Tea'])]
+    #[Groups(['read_User', 'read_Tea', 'write_User'])]
     private ?string $email;
 
     /**
@@ -102,19 +104,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(type: 'string')]
     //    #[Assert\NotBlank]
+    #[Groups(['write_User'])]
     private ?string $password;
 
     /**
      * Plain password.
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['read_User', 'write_User'])]
     private ?string $plainPassword = null;
 
     /**
      * Avatar.
      */
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: Avatar::class, cascade: ['persist', 'remove'], fetch: 'EXTRA_LAZY')]
-    #[Groups(['read_User'])]
+    #[Groups(['read_User', 'write_User'])]
     private ?Avatar $avatar = null;
 
     /**
