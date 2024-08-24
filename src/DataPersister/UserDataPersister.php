@@ -62,7 +62,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         $user->setPassword(
             $this->userPasswordHasher->hashPassword(
                 $user,
-                $data->getPlainPassword()
+                $data->getPassword()
             )
         );
 

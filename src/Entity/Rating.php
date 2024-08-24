@@ -94,7 +94,7 @@ class Rating
     #[Assert\Type(User::class)]
     #[Assert\NotBlank]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read_Rating'])]
+    #[Groups(['read_Rating, write_User, write_Tea'])]
     private ?User $author = null;
 
     /**
