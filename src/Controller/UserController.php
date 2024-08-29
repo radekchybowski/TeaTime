@@ -7,9 +7,9 @@ namespace App\Controller;
 
 use App\Entity\Enum\UserRole;
 use App\Entity\User;
+use App\Form\Type\UserType;
 use App\Service\UserServiceInterface;
 use Form\Type\UpdatePasswordType;
-use App\Form\Type\UserType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -224,13 +224,21 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($this->userService->isLastAdmin($user)) {
+                $this->addFlash(
+                    'danger',
+                    $this->translator->trans('message.deleted_last_admin')
+                );
+
+                return $this->redirectToRoute('user_index');
+            }
             $this->userService->delete($user);
 
             $this->addFlash(
                 'success',
                 $this->translator->trans('message.deleted_successfully')
             );
-            if ($this->isGranted('ROLE_ADMIN')) {
+            if ($this->isGranted('ROLE_ADMIN') && ($user->getId() !== $this->getUser()->getId())) {
                 return $this->redirectToRoute('user_index');
             }
 

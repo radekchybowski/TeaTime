@@ -640,6 +640,12 @@
                 <source>title.user_change-password</source>
                 <target>Zmień swoje hasło</target>
             </trans-unit>
+
+            <trans-unit id="message.deleted_last_admin">
+                <source>message.deleted_last_admin</source>
+                <target>
+                    Nie można usunąć użytkownika, ponieważ jest to ostatni administrator.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

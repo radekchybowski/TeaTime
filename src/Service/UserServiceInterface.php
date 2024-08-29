@@ -44,4 +44,20 @@ interface UserServiceInterface
      * @param User $user User entity
      */
     public function delete(User $user): void;
+
+    /**
+     * Delete entities that belongs to User entity.
+     *
+     * @param User $user User entity
+     */
+    public function deleteUserOrphans(User $user): void;
+
+    /**
+     * Checks if it's safe to delete an admin.
+     *
+     * @param User $userToDelete user that will be deleted if true
+     *
+     * @return bool true if there still will be admin after deletion
+     */
+    public function isLastAdmin(User $userToDelete): bool;
 }

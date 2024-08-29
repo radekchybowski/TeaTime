@@ -23,53 +23,53 @@ class TealistFixtures extends AbstractBaseFixtures implements DependentFixtureIn
      */
     public function loadData(): void
     {
-        if (null === $this->manager || null === $this->faker) {
-            return;
-        }
-
-        $this->createMany(13, 'tealists', function () {
-
-            $tealist = new Tealist();
-
-            $tealist->setTitle('label.tealist.favorites');
-
-            /* Setting time of creation and last update */
-            $tealist->setCreatedAt(
-                \DateTimeImmutable::createFromMutable(
-                    $this->faker->dateTimeBetween('-100 days', '-1 days')
-                )
-            );
-            $tealist->setUpdatedAt(
-                \DateTimeImmutable::createFromMutable(
-                    $this->faker->dateTimeBetween('-100 days', '-1 days')
-                )
-            );
-
-            /**
-             * Assigning random user as author.
-             *
-             * @var User $author
-             */
-            $author = $this->getRandomReference('users');
-            $tealist->setAuthor($author);
-
-            /**
-             * Assigning random teas to Tealist object.
-             *
-             * @var array<array-key, Tea> $teas
-             */
-            $teas = $this->getRandomReferences(
-                'teas',
-                $this->faker->numberBetween(2, 10)
-            );
-            foreach ($teas as $tea) {
-                $tealist->addTea($tea);
-            }
-
-            return $tealist;
-        });
-
-        $this->manager->flush();
+//        if (null === $this->manager || null === $this->faker) {
+//            return;
+//        }
+//
+//        $this->createMany(13, 'tealists', function () {
+//
+//            $tealist = new Tealist();
+//
+//            $tealist->setTitle('label.tealist.favorites');
+//
+//            /* Setting time of creation and last update */
+//            $tealist->setCreatedAt(
+//                \DateTimeImmutable::createFromMutable(
+//                    $this->faker->dateTimeBetween('-100 days', '-1 days')
+//                )
+//            );
+//            $tealist->setUpdatedAt(
+//                \DateTimeImmutable::createFromMutable(
+//                    $this->faker->dateTimeBetween('-100 days', '-1 days')
+//                )
+//            );
+//
+//            /**
+//             * Assigning random user as author.
+//             *
+//             * @var User $author
+//             */
+//            $author = $this->getRandomReference('users');
+//            $tealist->setAuthor($author);
+//
+//            /**
+//             * Assigning random teas to Tealist object.
+//             *
+//             * @var array<array-key, Tea> $teas
+//             */
+//            $teas = $this->getRandomReferences(
+//                'teas',
+//                $this->faker->numberBetween(2, 10)
+//            );
+//            foreach ($teas as $tea) {
+//                $tealist->addTea($tea);
+//            }
+//
+//            return $tealist;
+//        });
+//
+//        $this->manager->flush();
     }
 
     /**

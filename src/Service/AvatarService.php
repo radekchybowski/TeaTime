@@ -114,6 +114,8 @@ class AvatarService implements AvatarServiceInterface
     public function deleteByUser(User $user): void
     {
         $avatar = $this->avatarRepository->findOneByUser($user);
-        $this->delete($avatar);
+        if ($avatar) {
+            $this->delete($avatar);
+        }
     }
 }

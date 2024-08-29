@@ -96,7 +96,7 @@ class Comment
      * Tea.
      */
     #[ORM\ManyToOne(targetEntity: Tea::class, fetch: 'LAZY', inversedBy: 'comments')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'tea_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotBlank]
     #[Assert\Type(Tea::class)]
     private ?Tea $tea = null;

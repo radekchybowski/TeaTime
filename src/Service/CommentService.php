@@ -6,6 +6,8 @@
 namespace App\Service;
 
 use App\Entity\Comment;
+use App\Entity\Tea;
+use App\Entity\User;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -86,5 +88,33 @@ class CommentService implements CommentServiceInterface
     public function findOneById(int $id): ?Comment
     {
         return $this->commentRepository->findOneById($id);
+    }
+
+    /**
+     * Deletes all entities where param user = author.
+     *
+     * @param User $user User entity
+     */
+    public function deleteCommentsByAuthor(User $user): void
+    {
+        $commentsArray = $this->commentRepository->findByAuthor($user);
+
+        foreach ($commentsArray as $comment) {
+            $this->commentRepository->remove($comment);
+        }
+    }
+
+    /**
+     * Deletes all entities where param tea.
+     *
+     * @param Tea $tea
+     */
+    public function deleteCommentsByTea(Tea $tea): void
+    {
+        $commentsArray = $this->commentRepository->findByTea($tea);
+
+        foreach ($commentsArray as $comment) {
+            $this->commentRepository->remove($comment);
+        }
     }
 }

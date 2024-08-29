@@ -6,6 +6,8 @@
 namespace App\Service;
 
 use App\Entity\Comment;
+use App\Entity\Tea;
+use App\Entity\User;
 use Doctrine\ORM\NonUniqueResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 
@@ -47,4 +49,18 @@ interface CommentServiceInterface
      * @throws NonUniqueResultException
      */
     public function findOneById(int $id): ?Comment;
+
+    /**
+     * Deletes all entities where param user = author.
+     *
+     * @param User $user User entity
+     */
+    public function deleteCommentsByAuthor(User $user): void;
+
+    /**
+     * Deletes all entities where param tea.
+     *
+     * @param Tea $tea
+     */
+    public function deleteCommentsByTea(Tea $tea): void;
 }

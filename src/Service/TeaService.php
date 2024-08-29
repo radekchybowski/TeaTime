@@ -19,26 +19,6 @@ use Knp\Component\Pager\PaginatorInterface;
 class TeaService implements TeaServiceInterface
 {
     /**
-     * Category service.
-     */
-    private CategoryServiceInterface $categoryService;
-
-    /**
-     * Paginator.
-     */
-    private PaginatorInterface $paginator;
-
-    /**
-     * Tag service.
-     */
-    private TagServiceInterface $tagService;
-
-    /**
-     * Tea repository.
-     */
-    private TeaRepository $teaRepository;
-
-    /**
      * Constructor.
      *
      * @param CategoryServiceInterface $categoryService Category service
@@ -46,13 +26,14 @@ class TeaService implements TeaServiceInterface
      * @param TagServiceInterface      $tagService      Tag service
      * @param TeaRepository            $teaRepository   Tea repository
      */
-    public function __construct(CategoryServiceInterface $categoryService, PaginatorInterface $paginator, TagServiceInterface $tagService, TeaRepository $teaRepository)
-    {
-        $this->categoryService = $categoryService;
-        $this->paginator = $paginator;
-        $this->tagService = $tagService;
-        $this->teaRepository = $teaRepository;
-    }
+    public function __construct(
+        private CategoryServiceInterface $categoryService,
+        private PaginatorInterface $paginator,
+        private TagServiceInterface $tagService,
+        private RatingServiceInterface $ratingService,
+        private CommentServiceInterface $commentService,
+        private TeaRepository $teaRepository)
+    {}
 
     /**
      * Get paginated list.
@@ -139,6 +120,7 @@ class TeaService implements TeaServiceInterface
         $teasArray = $this->teaRepository->findByAuthor($user);
 
         foreach ($teasArray as $tea) {
+            $this->commentService->deleteCommentsByTea($tea);
             $this->teaRepository->delete($tea);
         }
     }

@@ -24,6 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class User.
  */
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
 #[ORM\UniqueConstraint(name: 'email_idx', columns: ['email'])]
@@ -111,7 +112,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Plain password.
      */
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['read_User', 'write_User'])]
     private ?string $plainPassword = null;
 
     /**
@@ -138,23 +138,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Comments.
      */
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, cascade: ['remove'])]
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, cascade: ['persist'])]
     private ?Collection $comments;
 
     /**
      * Tealists.
      */
     #[Groups(['read_User', 'write_User'])]
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Tealist::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Tealist::class, cascade: ['persist'])]
     private ?Collection $tealists;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ApiToken::class, orphanRemoval: true)]
-    private Collection $apiTokens;
+//    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ApiToken::class, orphanRemoval: true)]
+//    private Collection $apiTokens;
 
     /**
      * Ratings.
      */
-    #[ORM\OneToMany(mappedBy: 'tea', targetEntity: Rating::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Rating::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     private ?Collection $ratings;
 
     /**

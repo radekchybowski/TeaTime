@@ -630,6 +630,11 @@
                 <source>label.tealist.favorites</source>
                 <target>Favorites</target>
             </trans-unit>
+
+            <trans-unit id="message.deleted_last_admin">
+                <source>message.deleted_last_admin</source>
+                <target>User cannot be deleted because this is the last Administrator.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

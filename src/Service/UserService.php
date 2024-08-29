@@ -38,6 +38,11 @@ class UserService implements UserServiceInterface
     private RatingServiceInterface $ratingService;
 
     /**
+     * Comment Service.
+     */
+    private CommentServiceInterface $commentService;
+
+    /**
      * Paginator.
      */
     private PaginatorInterface $paginator;
@@ -53,16 +58,16 @@ class UserService implements UserServiceInterface
      * @param UserRepository              $userRepository User repository
      * @param TeaServiceInterface         $teaService     Tea Service
      * @param AvatarServiceInterface      $avatarService  Avatar Service
-     * @param RatingServiceInterface      $RatingService  Rating Service
      * @param PaginatorInterface          $paginator      Paginator
      * @param UserPasswordHasherInterface $passwordHasher Password hasher
      */
-    public function __construct(UserRepository $userRepository, TeaServiceInterface $teaService, AvatarServiceInterface $avatarService, RatingServiceInterface $ratingService, PaginatorInterface $paginator, UserPasswordHasherInterface $passwordHasher)
+    public function __construct(UserRepository $userRepository, TeaServiceInterface $teaService, AvatarServiceInterface $avatarService, RatingServiceInterface $ratingService, CommentServiceInterface $commentService, PaginatorInterface $paginator, UserPasswordHasherInterface $passwordHasher)
     {
         $this->userRepository = $userRepository;
         $this->teaService = $teaService;
         $this->avatarService = $avatarService;
         $this->ratingService = $ratingService;
+        $this->commentService = $commentService;
         $this->paginator = $paginator;
         $this->passwordHasher = $passwordHasher;
     }
@@ -117,9 +122,47 @@ class UserService implements UserServiceInterface
      */
     public function delete(User $user): void
     {
+        $this->deleteUserOrphans($user);
+        $this->userRepository->remove($user);
+    }
+
+    /**
+     * Delete entities that belongs to User entity.
+     *
+     * @param User $user User entity
+     */
+    public function deleteUserOrphans(User $user): void
+    {
         $this->ratingService->deleteRatingByAuthor($user);
         $this->teaService->deleteTeaByAuthor($user);
+        $this->commentService->deleteCommentsByAuthor($user);
         $this->avatarService->deleteByUser($user);
-        $this->userRepository->remove($user);
+    }
+
+    /**
+     * Checks if it's safe to delete an admin.
+     *
+     * @param User $userToDelete user that will be deleted if true
+     *
+     * @return bool true if there still will be admin after deletion
+     */
+    public function isLastAdmin(User $userToDelete): bool
+    {
+        $users = $this->userRepository->findAll();
+        $admins = 0;
+        $isAdmin = false;
+        foreach ($users as $user) {
+            if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+                ++$admins;
+                if ($user->getId() === $userToDelete->getId()) {
+                    $isAdmin = true;
+                }
+            }
+        }
+        if ((1 === $admins) && $isAdmin) {
+            return true;
+        }
+
+        return false;
     }
 }

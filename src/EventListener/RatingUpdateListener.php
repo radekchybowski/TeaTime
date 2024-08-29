@@ -10,7 +10,9 @@ use Doctrine\ORM\Events;
 /**
  * Rating update listener class.
  */
-#[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: Rating::class)]
+#[AsEntityListener(event: Events::postPersist, method: 'updateRating', entity: Rating::class)]
+#[AsEntityListener(event: Events::postUpdate, method: 'updateRating', entity: Rating::class)]
+#[AsEntityListener(event: Events::postRemove, method: 'updateRating', entity: Rating::class)]
 class RatingUpdateListener
 {
     private RatingServiceInterface $service;
@@ -32,7 +34,7 @@ class RatingUpdateListener
      *
      * @param Rating $rating rating entity
      */
-    public function postUpdate(Rating $rating): void
+    public function updateRating(Rating $rating): void
     {
         $this->service->calculateAverageRating($rating->getTea());
     }

@@ -126,7 +126,7 @@ class Tea
     /**
      * Author.
      */
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\ManyToOne(targetEntity: User::class, cascade: ['detach'], fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotBlank]
     #[Assert\Type(User::class)]

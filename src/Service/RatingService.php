@@ -9,6 +9,7 @@ use App\Entity\Rating;
 use App\Entity\Tea;
 use App\Entity\User;
 use App\Repository\RatingRepository;
+use App\Repository\TeaRepository;
 use Doctrine\ORM\NonUniqueResultException;
 
 /**
@@ -17,21 +18,15 @@ use Doctrine\ORM\NonUniqueResultException;
 class RatingService implements RatingServiceInterface
 {
     /**
-     * Rating repository.
-     */
-    private RatingRepository $ratingRepository;
-
-    private TeaServiceInterface $teaService;
-
-    /**
      * Constructor.
      *
      * @param RatingRepository $ratingRepository Rating repository
+     * @param TeaRepository    $teaRepository
      */
-    public function __construct(RatingRepository $ratingRepository, TeaServiceInterface $teaService)
-    {
-        $this->ratingRepository = $ratingRepository;
-        $this->teaService = $teaService;
+    public function __construct(
+        private RatingRepository $ratingRepository,
+        private TeaRepository $teaRepository
+    ) {
     }
 
     /**
@@ -52,8 +47,6 @@ class RatingService implements RatingServiceInterface
      * Save Rating entity and calling calculateAverateRating method.
      *
      * @param Rating $rating Rating entity
-     *
-     * @return void
      */
     public function save(Rating $rating): void
     {
@@ -101,7 +94,7 @@ class RatingService implements RatingServiceInterface
      *
      * @return Rating|null Rating
      */
-    public function findPreviousRating(User $user, Tea $tea) : ?Rating
+    public function findPreviousRating(User $user, Tea $tea): ?Rating
     {
         return $this->ratingRepository->findOneBy(['tea' => $tea, 'author' => $user]);
     }
@@ -109,26 +102,34 @@ class RatingService implements RatingServiceInterface
     /**
      * Calculate latest average rating and updates currentRating property on $tea entity.
      *
-     * @param Tea $tea tea
-     *
-     * @return void
+     * @param Tea|null $tea tea
      */
-    public function calculateAverageRating(Tea $tea) : void
+    public function calculateAverageRating(?Tea $tea): void
     {
+        if (null === $tea) {
+            return;
+        }
+
         $sum = 0;
         $i = 0;
         $allRatings = $this->ratingRepository->findByTea($tea);
 
+        if (!count($allRatings)) {
+            $tea->setCurrentRating(0);
+            $this->teaRepository->save($tea);
+
+            return;
+        }
         foreach ($allRatings as $rating) {
             $score = $rating->getRating();
             if (0 === $score) {
                 continue;
             }
             $sum += $score;
-            $i++;
+            ++$i;
         }
         $average = round($sum / $i, 1);
         $tea->setCurrentRating($average);
-        $this->teaService->save($tea);
+        $this->teaRepository->save($tea);
     }
 }
