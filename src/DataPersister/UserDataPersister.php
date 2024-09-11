@@ -5,7 +5,6 @@ namespace App\DataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\User;
 use App\Security\LoginFormAuthenticator;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
@@ -29,6 +28,16 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         if ($data instanceof User && ($context['collection_operation_name'] ?? null) === 'post') {
             $user = $this->register($data);
             $result = $this->decorated->persist($user, $context);
+        } elseif ($data instanceof User && ($context['item_operation_name'] ?? null) === 'put') {
+            if (!str_contains($data->getPassword(), '$2y$13$')) {
+                $data->setPassword(
+                    $this->userPasswordHasher->hashPassword(
+                        $data,
+                        $data->getPassword()
+                    )
+                );
+            }
+            $result = $this->decorated->persist($data, $context);
         } else {
             $result = $this->decorated->persist($data, $context);
         }
