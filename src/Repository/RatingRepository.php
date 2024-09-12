@@ -7,6 +7,7 @@ namespace App\Repository;
 
 use App\Entity\Rating;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,9 +23,18 @@ use Doctrine\Persistence\ManagerRegistry;
 class RatingRepository extends ServiceEntityRepository
 {
     /**
-     * Constructor.
+     * Items per page.
      *
-     * @param ManagerRegistry $registry
+     * Use constants to define configuration options that rarely change instead
+     * of specifying them in configuration files.
+     * See https://symfony.com/doc/current/best_practices.html#configuration
+     *
+     * @constant int
+     */
+    public const PAGINATOR_ITEMS_PER_PAGE = 10;
+
+    /**
+     * Constructor.
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -35,8 +45,6 @@ class RatingRepository extends ServiceEntityRepository
      * Save entity.
      *
      * @param Rating $entity entity
-     *
-     * @return void
      */
     public function save(Rating $entity): void
     {
@@ -48,8 +56,6 @@ class RatingRepository extends ServiceEntityRepository
      * Delete entity.
      *
      * @param Rating $entity entity
-     *
-     * @return void
      */
     public function delete(Rating $entity): void
     {
@@ -57,28 +63,52 @@ class RatingRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
-//    /**
-//     * @return Rating[] Returns an array of Rating objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('r.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * Query all records.
+     *
+     * @return QueryBuilder Query builder
+     */
+    public function queryAll(): QueryBuilder
+    {
+        return $this->getOrCreateQueryBuilder()
+            ->select('partial rating.{id, author, tea, createdAt, updatedAt, rating}')
+            ->orderBy('rating.updatedAt', 'DESC');
+    }
 
-//    public function findOneBySomeField($value): ?Rating
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * Get or create new query builder.
+     *
+     * @param QueryBuilder|null $queryBuilder Query builder
+     *
+     * @return QueryBuilder Query builder
+     */
+    private function getOrCreateQueryBuilder(?QueryBuilder $queryBuilder = null): QueryBuilder
+    {
+        return $queryBuilder ?? $this->createQueryBuilder('rating');
+    }
+
+    //    /**
+    //     * @return Rating[] Returns an array of Rating objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('r.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?Rating
+    //    {
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

@@ -1,11 +1,12 @@
 <?php
 /**
- * Rating type.
+ * Rating admin type.
  */
 
-namespace Form\Type;
+namespace App\Form\Type;
 
 use App\Entity\Rating;
+use App\Entity\Tea;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -13,20 +14,19 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
-use App\Entity\Category;
-use App\Entity\Tea;
-
-use App\Form\DataTransformer\TagsDataTransformer;
-
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
- * Class RatingType.
+ * Class RatingAdminType.
  */
-class RatingType extends AbstractType
+class RatingAdminType extends AbstractType
 {
+    /**
+     * Constructor.
+     */
+    public function __construct(private Security $security)
+    {
+    }
+
     /**
      * Builds the form.
      *
@@ -60,6 +60,34 @@ class RatingType extends AbstractType
                 ],
             ]
         );
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            $builder->add(
+                'author',
+                EntityType::class,
+                [
+                    'class' => User::class,
+                    'choice_label' => function ($user): string {
+                        return $user->getEmail();
+                    },
+                    'label' => 'label.user.email',
+                    'placeholder' => 'label.none',
+                    'required' => true,
+                ]
+            );
+            $builder->add(
+                'tea',
+                EntityType::class,
+                [
+                    'class' => Tea::class,
+                    'choice_label' => function ($tea): string {
+                        return $tea->getTitle().' ID: '.$tea->getId();
+                    },
+                    'label' => 'label.title',
+                    'placeholder' => 'label.none',
+                    'required' => true,
+                ]
+            );
+        }
     }
 
     /**

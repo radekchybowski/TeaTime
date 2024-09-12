@@ -17,7 +17,7 @@
                 <th>{{ knp_pagination_sortable(pagination, 'label.title'|trans, 'tea.title') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label.rating'|trans, 'tea.currentRating') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label.category'|trans, 'category.title') }}</th>
-                <th>{{ 'label.tag'|trans }}</th>
+{#                <th>{{ 'label.tag'|trans }}</th>#}
                 <th>{{ 'label.actions'|trans }}</th>
             </tr>
             </thead>
@@ -31,19 +31,19 @@
                             {{ tea.category.title }}
                         </a>
                     </td>
-                    <td>
-                        {% if tea.tags is defined and tea.tags|length %}
-                            {% for tag in tea.tags %}
-                                <a
-                                    class="badge badge-pill badge-secondary"
-                                    href="{{ url('tea_index', {'filters.tag_id' : tag.id}) }}"
-                                    title="{{ tag.title }}"
-                                >
-                                    {{ tag.title }}
-                                </a>
-                            {% endfor %}&nbsp;
-                        {% endif %}
-                    </td>
+{#                    <td>#}
+{#                        {% if tea.tags is defined and tea.tags|length %}#}
+{#                            {% for tag in tea.tags %}#}
+{#                                <a#}
+{#                                    class="badge badge-pill badge-secondary"#}
+{#                                    href="{{ url('tea_index', {'filters.tag_id' : tag.id}) }}"#}
+{#                                    title="{{ tag.title }}"#}
+{#                                >#}
+{#                                    {{ tag.title }}#}
+{#                                </a>#}
+{#                            {% endfor %}&nbsp;#}
+{#                        {% endif %}#}
+{#                    </td>#}
 {#                    <td>{{ tea.author.email }}</td>#}
                     <td>
                             <a class="btn btn-outline-primary m-1" href="{{ url('tea_show', {id: tea.id}) }}" title="{{ 'button.action_show'|trans }}">

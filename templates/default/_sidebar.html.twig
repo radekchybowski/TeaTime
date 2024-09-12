@@ -66,13 +66,13 @@
             >
                 {{ 'sidebar.link.tea'|trans }}
             </a>
-            <a
-                    class="sidebar-nav-item list-group-item list-group-item-action bg-light p-3"
-                    href="{{ path('tealist_index') }}"
-                    title="{{ 'sidebar.link.tealist'|trans }}"
-            >
-                {{ 'sidebar.link.tealist'|trans }}
-            </a>
+{#            <a#}
+{#                    class="sidebar-nav-item list-group-item list-group-item-action bg-light p-3"#}
+{#                    href="{{ path('tealist_index') }}"#}
+{#                    title="{{ 'sidebar.link.tealist'|trans }}"#}
+{#            >#}
+{#                {{ 'sidebar.link.tealist'|trans }}#}
+{#            </a>#}
             <a
                 class="sidebar-nav-item list-group-item list-group-item-action bg-light p-3"
                 href="{{ path('category_index') }}"
@@ -80,14 +80,21 @@
             >
                 {{ 'sidebar.link.category'|trans }}
             </a>
-            <a
-                class="sidebar-nav-item list-group-item list-group-item-action bg-light p-3"
-                href="{{ path('tag_index') }}"
-                title="{{ 'sidebar.link.tag'|trans }}"
-            >
-                {{ 'sidebar.link.tag'|trans }}
-            </a>
+{#            <a#}
+{#                class="sidebar-nav-item list-group-item list-group-item-action bg-light p-3"#}
+{#                href="{{ path('tag_index') }}"#}
+{#                title="{{ 'sidebar.link.tag'|trans }}"#}
+{#            >#}
+{#                {{ 'sidebar.link.tag'|trans }}#}
+{#            </a>#}
             {% if is_granted('ROLE_ADMIN') %}
+                <a
+                        class="sidebar-nav-item list-group-item list-group-item-action bg-light p-3"
+                        href="{{ path('rating_index') }}"
+                        title="{{ 'sidebar.link.rating'|trans }}"
+                >
+                    {{ 'sidebar.link.rating'|trans }}
+                </a>
                 <a
                     class="sidebar-nav-item list-group-item list-group-item-action bg-light p-3"
                     href="{{ path('comment_index') }}"
@@ -116,6 +123,13 @@
                 title="{{ 'sidebar.link.logout'|trans }}"
             >
                 {{ 'sidebar.link.logout'|trans }}
+            </a>
+            <a
+                    class="sidebar-nav-item list-group-item list-group-item-action bg-light p-3"
+                    href="{{ path('about_index') }}"
+                    title="{{ 'site_title.about'|trans }}"
+            >
+                {{ 'site_title.about'|trans }}
             </a>
         </div>
     </div>

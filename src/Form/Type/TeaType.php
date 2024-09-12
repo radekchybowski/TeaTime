@@ -80,15 +80,15 @@ class TeaType extends AbstractType
                 'required' => true,
             ]
         );
-        $builder->add(
-            'tags',
-            TextType::class,
-            [
-                'label' => 'label.tags',
-                'required' => false,
-                'attr' => ['max_length' => 128],
-            ]
-        );
+//        $builder->add(
+//            'tags',
+//            TextType::class,
+//            [
+//                'label' => 'label.tags',
+//                'required' => false,
+//                'attr' => ['max_length' => 128],
+//            ]
+//        );
         $builder->add(
             'description',
             TextareaType::class,
@@ -139,9 +139,9 @@ class TeaType extends AbstractType
             ]
         );
 
-        $builder->get('tags')->addModelTransformer(
-            $this->tagsDataTransformer
-        );
+//        $builder->get('tags')->addModelTransformer(
+//            $this->tagsDataTransformer
+//        );
 
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder->add(

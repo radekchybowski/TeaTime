@@ -1,0 +1,31 @@
+{% extends 'default/_dashboard.html.twig' %}
+
+{% block title %}{{ 'title.record_view'|trans }} {{ record.id }}{% endblock %}
+
+{% block section_title %}
+    <h1 class="text-left">Rating {{ record.id }}</h1>
+    <a class="btn btn-success" href="{{ path('rating_create') }}">{{ 'button.rating.action_create'|trans }}</a
+{% endblock %}
+
+{% block main %}
+    
+    {% if record is defined %}
+        <h3>{{ 'label.id'|trans }}: {{ record.id }}</h3>
+        <h3>{{ 'label.title'|trans }}</h3>
+        <p>{{ record.tea.title }}</p>
+        <h3>{{ 'label.email'|trans }}</h3>
+        <p>{{ record.author.email }}</p>
+        <h3>{{ 'label.rating'|trans }}</h3>
+        <p>{{ record.rating }}</p>
+        <h3>{{ 'label.created_at'|trans }}</h3>
+        <p>{{ record.createdAt|date('Y-m-d') }}</p>
+        <h3>{{ 'label.updated_at'|trans }}</h3>
+        <p>{{ record.updatedAt|date('Y-m-d') }}</p>
+        <a href="{{ url('rating_index') }}" title="{{ 'action.back_to_list'|trans }}">
+            {{ 'action.back_to_list'|trans }}
+        </a>
+    {% else %}
+        <p>{{ 'message.record_not_exist'|trans }}</p>
+    {%  endif %}
+
+{% endblock %}

@@ -11,6 +11,8 @@ use App\Entity\User;
 use App\Repository\RatingRepository;
 use App\Repository\TeaRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 
 /**
  * Class RatingService.
@@ -20,12 +22,14 @@ class RatingService implements RatingServiceInterface
     /**
      * Constructor.
      *
-     * @param RatingRepository $ratingRepository Rating repository
-     * @param TeaRepository    $teaRepository
+     * @param RatingRepository    $ratingRepository Rating repository
+     * @param TeaRepository       $teaRepository    Tea repository
+     * @param PaginatorInterface $paginator        Paginator
      */
     public function __construct(
         private RatingRepository $ratingRepository,
-        private TeaRepository $teaRepository
+        private TeaRepository $teaRepository,
+        private PaginatorInterface $paginator
     ) {
     }
 
@@ -69,6 +73,22 @@ class RatingService implements RatingServiceInterface
     public function delete(Rating $rating): void
     {
         $this->ratingRepository->delete($rating);
+    }
+
+    /**
+     * Get paginated list.
+     *
+     * @param int $page Page number
+     *
+     * @return PaginationInterface<string, mixed> Paginated list
+     */
+    public function getPaginatedList(int $page): PaginationInterface
+    {
+        return $this->paginator->paginate(
+            $this->ratingRepository->queryAll(),
+            $page,
+            RatingRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
     }
 
     /**

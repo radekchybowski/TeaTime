@@ -635,6 +635,41 @@
                 <source>message.deleted_last_admin</source>
                 <target>User cannot be deleted because this is the last Administrator.</target>
             </trans-unit>
+
+            <trans-unit id="label.rating">
+                <source>label.rating</source>
+                <target>Rating</target>
+            </trans-unit>
+
+            <trans-unit id="label.user.is_admin">
+                <source>label.user.is_admin</source>
+                <target>Admin</target>
+            </trans-unit>
+
+            <trans-unit id="site_title.rating">
+                <source>site_title.rating</source>
+                <target>Ratings</target>
+            </trans-unit>
+
+            <trans-unit id="sidebar.link.rating">
+                <source>sidebar.link.rating</source>
+                <target>Ratings</target>
+            </trans-unit>
+
+            <trans-unit id="button.rating.action_create">
+                <source>button.rating.action_create</source>
+                <target>Create rating</target>
+            </trans-unit>
+
+            <trans-unit id="title.rating_create">
+                <source>title.rating_create</source>
+                <target>Create new rating</target>
+            </trans-unit>
+
+            <trans-unit id="site_title.about">
+                <source>site_title.about</source>
+                <target>About</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

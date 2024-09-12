@@ -1,0 +1,69 @@
+{% extends 'default/_dashboard.html.twig' %}
+
+{% block title %}{{ 'site_title.rating'|trans }}{% endblock %}
+{% block section_title %}
+    <h1 class="text-left">{{ 'site_title.rating'|trans }}</h1>
+    <a class="btn btn-success" href="{{ path('rating_create') }}">{{ 'button.rating.action_create'|trans }}</a>
+{% endblock %}
+{% block main %}
+    {% if pagination is defined and pagination.items|length %}
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'rating.id') }}</th>
+                <th>{{ 'label.title'|trans }}</th>
+                <th>{{ 'label.email'|trans }}</th>
+{#                <th>{{ knp_pagination_sortable(pagination, 'label.title'|trans, 'rating.tea') }}</th>#}
+{#                <th>{{ knp_pagination_sortable(pagination, 'label.email'|trans, 'rating.author.email') }}</th>#}
+                <th>{{ knp_pagination_sortable(pagination, 'label.rating'|trans, 'rating.rating') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.updated_at'|trans, 'rating.updatedAt') }}</th>
+                <th>{{ 'label.actions'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for rating in pagination.items %}
+                <tr>
+                    <td>{{ rating.id }}</td>
+                    <td>
+                        <a href="{{ url('tea_show', {id: rating.tea.id}) }}" title="{{ rating.tea.title }}">
+                            {{ rating.tea.title }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ url('user_show', {id: rating.author.id}) }}" title="{{ rating.author.email }}">
+                            {{ rating.author.email }}
+                        </a>
+                    </td>
+                    <td>{{ rating.rating }}</td>
+                    <td>{{ rating.updatedAt|date('Y-m-d') }}</td>
+                    <td>
+                        <a class="btn btn-outline-primary m-1" href="{{ path('rating_show', {'id': rating.id}) }}" title="{{ 'button.action_show'|trans }}">
+                            {{ 'button.action_show'|trans }}
+                        </a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a class="btn btn-outline-success m-1" href="{{ path('rating_edit', {'id': rating.id}) }}" title="{{ 'button.action_show'|trans }}">
+                                {{ 'button.action_edit'|trans }}
+                            </a>
+                            <a class="btn btn-outline-danger m-1" href="{{ path('rating_delete', {'id': rating.id}) }}" title="{{ 'button.action_show'|trans }}">
+                                {{ 'button.action_delete'|trans }}
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+    {% else %}
+        <p>{{ 'message.empty_list'|trans }}</p>
+    {%  endif %}
+
+{% endblock %}

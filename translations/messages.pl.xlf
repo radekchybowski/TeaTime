@@ -646,6 +646,40 @@
                 <target>
                     Nie można usunąć użytkownika, ponieważ jest to ostatni administrator.</target>
             </trans-unit>
+            <trans-unit id="label.rating">
+                <source>label.rating</source>
+                <target>Rating</target>
+            </trans-unit>
+
+            <trans-unit id="label.user.is_admin">
+                <source>label.user.is_admin</source>
+                <target>Administrator</target>
+            </trans-unit>
+
+            <trans-unit id="site_title.rating">
+                <source>site_title.rating</source>
+                <target>Ratingi</target>
+            </trans-unit>
+
+            <trans-unit id="sidebar.link.rating">
+                <source>sidebar.link.rating</source>
+                <target>Ratingi</target>
+            </trans-unit>
+
+            <trans-unit id="button.rating.action_create">
+                <source>button.rating.action_create</source>
+                <target>Utwórz rating</target>
+            </trans-unit>
+
+            <trans-unit id="title.rating_create">
+                <source>title.rating_create</source>
+                <target>Utwórz nowy rating</target>
+            </trans-unit>
+
+            <trans-unit id="site_title.about">
+                <source>site_title.about</source>
+                <target>O serwisie</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
